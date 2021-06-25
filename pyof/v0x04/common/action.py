@@ -139,7 +139,10 @@ class ActionHeader(GenericStruct):
 
         for cls in ActionHeader.__subclasses__():
             if self.action_type.value in cls.get_allowed_types():
-                self.__class__ = cls
+                if self.action_type.value == ActionType.OFPAT_EXPERIMENTER:
+                    self.__class__ = cls.get_subclass(buff, offset+4)
+                else:
+                    self.__class__ = cls
                 break
 
         super().unpack(buff[:offset+self.length], offset)
@@ -154,11 +157,11 @@ class ActionExperimenter(ActionHeader):
     """Action structure for OFPAT_EXPERIMENTER."""
 
     experimenter = UBInt32()
-    body = BinaryData()
-
+    
     _allowed_types = (ActionType.OFPAT_EXPERIMENTER,)
+    _allowed_ids = ()
 
-    def __init__(self, length=None, experimenter=None, body=None):
+    def __init__(self, length=None, experimenter=None):
         """Create ActionExperimenterHeader with the optional parameters below.
 
         Args:
@@ -170,7 +173,55 @@ class ActionExperimenter(ActionHeader):
         super().__init__(action_type=ActionType.OFPAT_EXPERIMENTER)
         self.length = length
         self.experimenter = experimenter
+
+    @classmethod
+    def get_allowed_ids(cls):
+        """Return Experimenter IDs handled by te class."""
+        return cls._allowed_ids
+
+    @classmethod
+    def default_subclass(cls):
+        """Class used when no class handles the Experimenter ID."""
+        return ActionExperimenterDefault
+
+    @classmethod
+    def get_subclass(cls, buff, offset):
+        """Return the right subclass.
+           
+           Subclasses must implement this method and decide which of
+           its subclasses is reponsible for this action.
+        """
+        experimenter = UBInt32()
+        experimenter.unpack(buff, offset)
+        for action_cls in cls.__subclasses__():
+            if experimenter.value in action_cls.get_allowed_ids():
+                return action_cls.get_subclass(buff, offset+4)
+        return cls.default_subclass()
+
+
+class ActionExperimenterDefault(ActionExperimenter):
+    """Class for unknown Experimenter."""
+
+    body = BinaryData()
+
+    _allowed_ids = ()
+
+    def __init__(self, length=None, experimenter=None, body=None):
+        """Create ActionExperimenterHeader with the optional parameters below.
+
+        Args:
+            experimenter (int): The experimenter field is the Experimenter ID,
+                which takes the same form as in struct ofp_experimenter.
+            body(bytes): The body of the experimenter. It is vendor-defined,
+                so it is left as it is.
+        """
+        super().__init__(action_type=ActionType.OFPAT_EXPERIMENTER,
+                         length=length, experimenter=experimenter)
         self.body = body
+
+    @classmethod
+    def get_subclass(cls, buff, offset):
+        return cls
 
 
 class ActionGroup(ActionHeader):
