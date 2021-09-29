@@ -215,6 +215,7 @@ class ActionExperimenterDefault(ActionExperimenter):
             body(bytes): The body of the experimenter. It is vendor-defined,
                 so it is left as it is.
         """
+
         super().__init__(length=length, experimenter=experimenter)
         self.body = body
 
