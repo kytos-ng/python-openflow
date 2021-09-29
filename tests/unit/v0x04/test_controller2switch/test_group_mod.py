@@ -3,7 +3,7 @@ from unittest import TestCase
 
 from pyof.v0x04.controller2switch.group_mod import GroupMod
 from pyof.v0x04.common.action import (
-    ActionExperimenter, ActionSetField, ListOfActions)
+    ActionExperimenterDefault, ActionSetField, ListOfActions)
 from pyof.v0x04.common.flow_match import OxmClass, OxmOfbMatchField, OxmTLV
 from pyof.v0x04.common.port import PortNo
 from pyof.v0x04.controller2switch.common import Bucket
@@ -43,9 +43,9 @@ class TestListBuckets(TestCase):
 
         self.action1 = ActionSetField(field=self.oxmtlv1)
         self.action2 = ActionSetField(field=self.oxmtlv2)
-        self.action3 = ActionExperimenter(length=16, experimenter=0x00002320,
+        self.action3 = ActionExperimenterDefault(length=16, experimenter=0x00002320,
                                      body=b'\x00\x0e\xff\xf8\x28\x00\x00\x00')
-        self.action4 = ActionExperimenter(length=16, experimenter=0x00001223,
+        self.action4 = ActionExperimenterDefault(length=16, experimenter=0x00001223,
                                      body=b'\x00\x0e\xff\xff\x28\x00\x00\x00')
 
     def test_bucket_list(self):
