@@ -157,7 +157,7 @@ class ActionExperimenter(ActionHeader):
     """Action structure for OFPAT_EXPERIMENTER."""
 
     experimenter = UBInt32()
-    
+
     _allowed_types = (ActionType.OFPAT_EXPERIMENTER,)
     _allowed_ids = ()
 
@@ -187,7 +187,7 @@ class ActionExperimenter(ActionHeader):
     @classmethod
     def get_subclass(cls, buff, offset):
         """Return the right subclass.
-           
+
            Subclasses must implement this method and decide which of
            its subclasses is reponsible for this action.
         """
@@ -215,8 +215,8 @@ class ActionExperimenterDefault(ActionExperimenter):
             body(bytes): The body of the experimenter. It is vendor-defined,
                 so it is left as it is.
         """
-        super().__init__(action_type=ActionType.OFPAT_EXPERIMENTER,
-                         length=length, experimenter=experimenter)
+
+        super().__init__(length=length, experimenter=experimenter)
         self.body = body
 
     @classmethod
