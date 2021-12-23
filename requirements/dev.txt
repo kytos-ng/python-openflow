@@ -14,7 +14,7 @@ attrs==19.3.0             # via pytest
 babel==2.8.0              # via sphinx
 certifi==2019.11.28       # via requests
 chardet==3.0.4            # via requests
-click==7.1.1              # via pip-tools
+click>=7.1.1              # via pip-tools
 coverage==5.0.4           # via python-openflow
 distlib==0.3.0            # via virtualenv
 docopt==0.6.2             # via yala
