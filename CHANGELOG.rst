@@ -22,6 +22,15 @@ Security
 ========
 
 
+[2022.1rc1] - "jovelina" release candidate - 2022-01-14
+******************************************************
+
+Added
+=====
+- Added support for vendor ``ActionExperimenter`` that can be implemented
+  using a NApp.
+ 
+
 [2021.1] - "final" - 2021-05-31
 *******************************
 
