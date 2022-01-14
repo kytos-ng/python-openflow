@@ -17,7 +17,8 @@ build:
             - pip install coverage
         override:
             -
-                command: 'tox'
+                command: 'tox -e py36'
+                only_if: 'tox -a | grep -q py36'
                 coverage:
                     file: '.coverage'
                     config_file: '.coveragerc'
