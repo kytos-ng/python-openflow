@@ -3,28 +3,21 @@
 Overview
 ########
 
-**WARNING: As previously announced on our communication channels, the Kytos
-project will enter the "shutdown" phase on May 31, 2021. After this date,
-only critical patches (security and core bug fixes) will be accepted, and the
-project will be in "critical-only" mode for another six months (until November
-30, 2021). For more information visit the FAQ at <https://kytos.io/faq>. We'll
-have eternal gratitude to the entire community of developers and users that made
-the project so far.**
 
-|Experimental| |Openflow| |Tag| |Release| |License| |Build| |Coverage| |Quality|
+|Stable| |Openflow| |Tag| |Release| |License| |Build| |Coverage| |Quality|
 
 *python-openflow* is a low level library to parse and create OpenFlow messages.
 If you want to read an OpenFlow packet from an open socket or send a message to
 an OpenFlow switch, this is your best friend. The main features are: high
 performance, short learning curve and free software license.
 
-This library is part of `Kytos project <http://kytos.io>`_, but feel free to
+This library is part of `Kytos-NG project <http://kytos-ng.github.io>`_, but feel free to
 use this simple and intuitive library in other projects.
 
 .. attention::
    *python-openflow* does not perform I/O operations. To communicate with a
    switch, you must write your own controller using this library or use our
-   `Kytos SDN Platform <http://kytos.io/>`_.
+   `Kytos-NG SDN Platform <http://kytos-ng.github.io/>`_.
 
 A quick start follows for you to check whether this project fits your needs.
 For a more detailed documentation, please check the `python-openflow API
@@ -50,7 +43,7 @@ First you need to clone `python-openflow` repository:
 
 .. code-block:: shell
 
-   $ git clone https://github.com/kytos/python-openflow.git
+   $ git clone https://github.com/kytos-ng/python-openflow.git
 
 After cloning, the installation process is done by standard `setuptools` install
 procedure:
@@ -112,11 +105,6 @@ Authors
 
 For a complete list of authors, please open ``AUTHORS.rst`` file.
 
-Contributing
-************
-
-If you want to contribute to this project, please read `Kytos Documentation
-<https://docs.kytos.io/developer/how_to_contribute/>`__ website.
 
 License
 *******
@@ -125,21 +113,21 @@ This software is under *MIT-License*. For more information please read
 ``LICENSE`` file.
 
 
-.. |Experimental| image:: https://img.shields.io/badge/stability-experimental-orange.svg
+.. |Stable| image:: https://img.shields.io/badge/stability-stable-orange.svg
 .. |Openflow| image:: https://img.shields.io/badge/Openflow-1.3-brightgreen.svg
    :target: https://www.opennetworking.org/images/stories/downloads/sdn-resources/onf-specifications/openflow/openflow-switch-v1.3.5.pdf
-.. |Tag| image:: https://img.shields.io/github/tag/kytos/python-openflow.svg
-   :target: https://github.com/kytos/python-openflow/tags
-.. |Release| image:: https://img.shields.io/github/release/kytos/python-openflow.svg
-   :target: https://github.com/kytos/python-openflow/releases
-.. |License| image:: https://img.shields.io/github/license/kytos/python-openflow.svg
-   :target: https://github.com/kytos/python-openflow/blob/master/LICENSE
-.. |Build| image:: https://scrutinizer-ci.com/g/kytos/python-openflow/badges/build.png?b=master
+.. |Tag| image:: https://img.shields.io/github/tag/kytos-ng/python-openflow.svg
+   :target: https://github.com/kytos-ng/python-openflow/tags
+.. |Release| image:: https://img.shields.io/github/release/kytos-ng/python-openflow.svg
+   :target: https://github.com/kytos-ng/python-openflow/releases
+.. |License| image:: https://img.shields.io/github/license/kytos-ng/python-openflow.svg
+   :target: https://github.com/kytos-ng/python-openflow/blob/master/LICENSE
+.. |Build| image:: https://scrutinizer-ci.com/g/kytos-ng/python-openflow/badges/build.png?b=master
    :alt: Build status
-   :target: https://scrutinizer-ci.com/g/kytos/python-openflow/?branch=master
-.. |Coverage| image:: https://scrutinizer-ci.com/g/kytos/python-openflow/badges/coverage.png?b=master
+   :target: https://scrutinizer-ci.com/g/kytos-ng/python-openflow/?branch=master
+.. |Coverage| image:: https://scrutinizer-ci.com/g/kytos-ng/python-openflow/badges/coverage.png?b=master
    :alt: Code coverage
-   :target: https://scrutinizer-ci.com/g/kytos/python-openflow/?branch=master
-.. |Quality| image:: https://scrutinizer-ci.com/g/kytos/python-openflow/badges/quality-score.png?b=master
+   :target: https://scrutinizer-ci.com/g/kytos-ng/python-openflow/?branch=master
+.. |Quality| image:: https://scrutinizer-ci.com/g/kytos-ng/python-openflow/badges/quality-score.png?b=master
    :alt: Code-quality score
-   :target: https://scrutinizer-ci.com/g/kytos/python-openflow/?branch=master
+   :target: https://scrutinizer-ci.com/g/kytos-ng/python-openflow/?branch=master
