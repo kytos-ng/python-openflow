@@ -23,4 +23,4 @@ Contributors
 - Raphael Cobe <rmcobe AT ncc DOT unesp DOT br>
 - Daniel Bruce <dbruc009 AT fiu DOT edu>
 - Antonio João Ferreira Francisco <antonio AT rednesp DOT br>
-- Vinicius Arcanjo <viniciusarcanjov AT gmail DOT com>
+- Vinicius Arcanjo <vindasil AT fiu DOT edu>
