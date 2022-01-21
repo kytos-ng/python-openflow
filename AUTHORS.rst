@@ -22,3 +22,5 @@ Contributors
 - Kenia Chang He <keniachang1997 AT gmail DOT com>
 - Raphael Cobe <rmcobe AT ncc DOT unesp DOT br>
 - Daniel Bruce <dbruc009 AT fiu DOT edu>
+- Antonio João Ferreira Francisco <antonio AT rednesp DOT br>
+- Vinicius Arcanjo <vindasil AT fiu DOT edu>
