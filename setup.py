@@ -50,32 +50,22 @@ class TestCommand(Command):
     """Test tags decorators."""
 
     user_options = [
-        ('size=', None, 'Specify the size of tests to be executed.'),
-        ('type=', None, 'Specify the type of tests to be executed.'),
+        ("k=", None, "Specify a pytest -k expression."),
     ]
-
-    sizes = ('small', 'medium', 'large', 'all')
-    types = ('unit', 'integration', 'e2e')
 
     def get_args(self):
         """Return args to be used in test command."""
-        return '--size %s --type %s' % (self.size, self.type)
+        if self.k:
+            return f"-k '{self.k}'"
+        return ""
 
     def initialize_options(self):
         """Set default size and type args."""
-        self.size = 'all'
-        self.type = 'unit'
+        self.k = ""
 
     def finalize_options(self):
         """Post-process."""
-        try:
-            assert self.size in self.sizes, ('ERROR: Invalid size:'
-                                             f':{self.size}')
-            assert self.type in self.types, ('ERROR: Invalid type:'
-                                             f':{self.type}')
-        except AssertionError as exc:
-            print(exc)
-            sys.exit(-1)
+        pass
 
 
 class Cleaner(clean):
@@ -94,36 +84,27 @@ class Cleaner(clean):
 class Test(TestCommand):
     """Run all tests."""
 
-    description = 'run tests and display results'
-
-    def get_args(self):
-        """Return args to be used in test command."""
-        markers = self.size
-        if markers == "small":
-            markers = 'not medium and not large'
-        size_args = "" if self.size == "all" else "-m '%s'" % markers
-        return '--addopts="tests/%s %s"' % (self.type, size_args)
+    description = "run tests and display results"
 
     def run(self):
         """Run tests."""
-        cmd = 'python setup.py pytest %s' % self.get_args()
+        cmd = f"python3 -m pytest tests/ {self.get_args()}"
         try:
             check_call(cmd, shell=True)
         except CalledProcessError as exc:
             print(exc)
-            print('Unit tests failed. Fix the error(s) above and try again.')
+            print('Unit tests failed. Fix the errors above and try again.')
             sys.exit(-1)
 
 
 class TestCoverage(Test):
     """Display test coverage."""
 
-    description = 'run tests and display code coverage'
+    description = "run tests and display code coverage"
 
     def run(self):
         """Run tests quietly and display coverage report."""
-        cmd = 'coverage3 run setup.py pytest %s' % self.get_args()
-        cmd += '&& coverage3 report'
+        cmd = f"python3 -m pytest --cov=. tests/ {self.get_args()}"
         try:
             check_call(cmd, shell=True)
         except CalledProcessError as exc:
@@ -159,23 +140,6 @@ class Linter(SimpleCommand):
             sys.exit(-1)
 
 
-class CITest(TestCommand):
-    """Run all CI tests."""
-
-    description = 'run all CI tests: unit and doc tests, linter'
-
-    def run(self):
-        """Run unit tests with coverage, doc tests and linter."""
-        coverage_cmd = 'python setup.py coverage %s' % self.get_args()
-        doctest_cmd = 'python setup.py doctest'
-        lint_cmd = 'python setup.py lint'
-        cmd = '%s && %s && %s' % (coverage_cmd, doctest_cmd, lint_cmd)
-        check_call(cmd, shell=True)
-
-
-NEEDS_PYTEST = {'pytest', 'test', 'coverage'}.intersection(sys.argv)
-PYTEST_RUNNER = ['pytest-runner'] if NEEDS_PYTEST else []
-
 setup(name='python-openflow',
       version=__version__,
       description='Library to parse and generate OpenFlow messages',
@@ -186,13 +150,10 @@ setup(name='python-openflow',
       license='MIT',
       test_suite='tests',
       include_package_data=True,
-      setup_requires=PYTEST_RUNNER,
-      tests_require=['pytest==7.0.0'],
-      extras_require={'dev': ['pip-tools >= 2.0',
-                              'coverage', 'pytest', 'yala', 'tox']},
+      extras_require={'dev': ['pip-tools >= 2.0', 'pytest==7.0.0',
+                              'pytest-cov==3.0.0', 'pytest', 'yala', 'tox']},
       packages=find_packages(exclude=['tests']),
       cmdclass={
-          'ci': CITest,
           'clean': Cleaner,
           'coverage': TestCoverage,
           'doctest': DocTest,
@@ -203,9 +164,6 @@ setup(name='python-openflow',
       classifiers=[
           'License :: OSI Approved :: MIT License',
           'Operating System :: POSIX :: Linux',
-          'Programming Language :: Python :: 3.6',
-          'Programming Language :: Python :: 3.7',
-          'Programming Language :: Python :: 3.8',
           'Programming Language :: Python :: 3.9',
           'Topic :: System :: Networking',
           'Topic :: Software Development :: Libraries'
