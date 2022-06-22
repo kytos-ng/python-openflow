@@ -6,7 +6,7 @@ filter:
     paths: ["pyof/*", "tests/*"]
 build:
     environment:
-        python: 3.6
+        python: 3.9.12
         postgresql: false
         redis: false
     dependencies:
@@ -17,8 +17,9 @@ build:
             - pip install coverage
         override:
             -
-                command: 'tox -e py36'
-                only_if: 'tox -a | grep -q py36'
+                command: 'tox'
+                only_if: 'tox -a | grep -q py39'
+                idle_timeout: 300
                 coverage:
                     file: '.coverage'
                     config_file: '.coveragerc'
