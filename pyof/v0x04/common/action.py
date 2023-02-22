@@ -157,11 +157,12 @@ class ActionExperimenter(ActionHeader):
     """Action structure for OFPAT_EXPERIMENTER."""
 
     experimenter = UBInt32()
+    body = BinaryData()
 
     _allowed_types = (ActionType.OFPAT_EXPERIMENTER,)
     _allowed_ids = ()
 
-    def __init__(self, length=None, experimenter=None):
+    def __init__(self, length=None, experimenter=None, body=None):
         """Create ActionExperimenterHeader with the optional parameters below.
 
         Args:
@@ -173,6 +174,7 @@ class ActionExperimenter(ActionHeader):
         super().__init__(action_type=ActionType.OFPAT_EXPERIMENTER)
         self.length = length
         self.experimenter = experimenter
+        self.body = body
 
     @classmethod
     def get_allowed_ids(cls):
