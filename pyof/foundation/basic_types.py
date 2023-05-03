@@ -658,6 +658,7 @@ class TypeList(list, GenericStruct):
         for item in items:
             self.append(item)
 
+    # pylint: disable=no-value-for-parameter
     def pack(self, value=None):
         """Pack the value as a binary representation.
 
@@ -684,7 +685,7 @@ class TypeList(list, GenericStruct):
             msg = "{} pack error: {}".format(type(self).__name__, err)
             raise exceptions.PackException(msg)
 
-    # pylint: disable=arguments-differ
+    # pylint: disable=arguments-renamed
     def unpack(self, buff, item_class, offset=0):
         """Unpack the elements of the list.
 

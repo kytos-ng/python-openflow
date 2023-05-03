@@ -6,7 +6,8 @@ descriptions.
 import sys
 from abc import abstractmethod
 # Disabling checks due to https://github.com/PyCQA/pylint/issues/73
-# pylint: disable=import-error,no-name-in-module
+# pylint: disable=import-error,no-name-in-module,unspecified-encoding
+# pylint: disable=consider-using-with
 from distutils.command.clean import clean
 # pylint: enable=import-error,no-name-in-module
 from subprocess import CalledProcessError, call, check_call
@@ -150,8 +151,19 @@ setup(name='python-openflow',
       license='MIT',
       test_suite='tests',
       include_package_data=True,
-      extras_require={'dev': ['pip-tools >= 2.0', 'pytest==7.0.0',
-                              'pytest-cov==3.0.0', 'pytest', 'yala', 'tox']},
+      extras_require={'dev': [
+          'pip-tools >= 2.0',
+          'pytest==7.2.1',
+          'pytest-cov==4.0.0',
+          'pytest-asyncio==0.20.3',
+          'black==23.3.0',
+          'isort==5.12.0',
+          'pylint==2.15.0',
+          'pycodestyle==2.10.0',
+          'yala==3.2.0',
+          'tox==3.28.0',
+          'virtualenv==20.21.0'
+      ]},
       packages=find_packages(exclude=['tests']),
       cmdclass={
           'clean': Cleaner,
