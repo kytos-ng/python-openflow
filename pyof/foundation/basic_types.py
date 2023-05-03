@@ -658,6 +658,7 @@ class TypeList(list, GenericStruct):
         for item in items:
             self.append(item)
 
+    # pylint: disable=no-value-for-parameter
     def pack(self, value=None):
         """Pack the value as a binary representation.
 
