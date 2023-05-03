@@ -684,7 +684,7 @@ class TypeList(list, GenericStruct):
             msg = "{} pack error: {}".format(type(self).__name__, err)
             raise exceptions.PackException(msg)
 
-    # pylint: disable=arguments-differ
+    # pylint: disable=arguments-renamed
     def unpack(self, buff, item_class, offset=0):
         """Unpack the elements of the list.
 

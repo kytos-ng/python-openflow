@@ -296,8 +296,9 @@ class Ethernet(GenericStruct):
         length = 0
         begin = 12
 
-        while(buff[begin:begin+2] in (EtherType.VLAN.to_bytes(2, 'big'),
-                                      EtherType.VLAN_QINQ.to_bytes(2, 'big'))):
+        ether_types = (EtherType.VLAN.to_bytes(2, 'big'),
+                       EtherType.VLAN_QINQ.to_bytes(2, 'big'))
+        while buff[begin:begin+2] in ether_types:
             length += 4
             begin += 4
 
