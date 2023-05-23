@@ -17,6 +17,7 @@ Removed
 
 Fixed
 =====
+- Made a shallow copy of ``__dict__`` when iterating over class attributes to fix potential ``RuntimeError``
 
 Security
 
