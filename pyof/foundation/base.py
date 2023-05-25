@@ -586,7 +586,7 @@ class GenericStruct(metaclass=MetaStruct):
         """
         #: see this method docstring for a important notice about the use of
         #: cls.__dict__
-        for name, value in cls.__dict__.items():
+        for name, value in cls.__dict__.copy().items():
             # gets only our (pyof) attributes. this ignores methods, dunder
             # methods and attributes, and common python type attributes.
             if GenericStruct._is_pyof_attribute(value):
@@ -605,7 +605,7 @@ class GenericStruct(metaclass=MetaStruct):
             generator: tuples with attribute name and value.
 
         """
-        for name, value in self.__dict__.items():
+        for name, value in self.__dict__.copy().items():
             if name in map((lambda x: x[0]), self.get_class_attributes()):
                 yield (name, value)
 
