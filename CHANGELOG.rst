@@ -6,21 +6,12 @@ All notable changes to the `python-openflow` project are documented in this file
 [UNRELEASED] - Under development
 ********************************
 
-Added
-=====
-
-Changed
-=======
-
-Removed
-=======
+[2023.1.0] - 2023-06-05
+***********************
 
 Fixed
 =====
 - Made a shallow copy of ``__dict__`` when iterating over class attributes to fix potential ``RuntimeError``
-
-Security
-
 
 [2022.3.0] - 2023-01-23
 ***********************
