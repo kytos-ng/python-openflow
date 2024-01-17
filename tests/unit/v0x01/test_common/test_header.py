@@ -1,4 +1,5 @@
 """Testing Header structure."""
+import pytest
 import os
 import unittest
 from unittest.mock import patch
@@ -6,10 +7,10 @@ from unittest.mock import patch
 from pyof.v0x01.common.header import Header, Type
 
 
-class TestHeader(unittest.TestCase):
+class TestHeader:
     """Test the message Header."""
 
-    def setUp(self):
+    def setup_method(self):
         """Setup the TestHeader Class instantiating a HELLO header."""
         self.message = Header()
         self.message.message_type = Type.OFPT_HELLO
@@ -18,18 +19,18 @@ class TestHeader(unittest.TestCase):
 
     def test_size(self):
         """[Common/Header] - size 8."""
-        self.assertEqual(self.message.get_size(), 8)
+        assert self.message.get_size() == 8
 
-    @unittest.expectedFailure
+    @pytest.mark.xfail
     def test_pack_empty(self):
         """[Common/Header] - packing empty header."""
-        self.assertRaises(TypeError,
+        pytest.raises(TypeError,
                           Header().pack())
 
     def test_pack(self):
         """[Common/Header] - packing Hello."""
         packed_header = b'\x01\x00\x00\x00\x00\x00\x00\x01'
-        self.assertEqual(self.message.pack(), packed_header)
+        assert self.message.pack() == packed_header
 
     def test_unpack(self):
         """[Common/Header] - unpacking Hello."""
@@ -38,9 +39,9 @@ class TestHeader(unittest.TestCase):
         f = open(filename, 'rb')
         self.message.unpack(f.read(8))
 
-        self.assertEqual(self.message.length, 8)
-        self.assertEqual(self.message.xid, 1)
-        self.assertEqual(self.message.message_type, Type.OFPT_HELLO)
-        self.assertEqual(self.message.version, 1)
+        assert self.message.length == 8
+        assert self.message.xid == 1
+        assert self.message.message_type == Type.OFPT_HELLO
+        assert self.message.version == 1
 
         f.close()

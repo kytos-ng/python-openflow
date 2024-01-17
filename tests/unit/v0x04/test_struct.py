@@ -1,11 +1,12 @@
 """Automate struct tests."""
+import pytest
 import unittest
 
 from pyof.v0x04.common.header import Header
 from pyof.v0x04.common.utils import new_message_from_header
 
 
-class TestStruct(unittest.TestCase):
+class TestStruct:
     """Run tests related to struct packing and unpacking.
 
     Test the lib with raw dump files from an OpenFlow switch. We assume the
@@ -104,11 +105,11 @@ class TestStruct(unittest.TestCase):
         unpacked = new_message_from_header(header)
         unpacked.unpack(packed[header_size:])
 
-        self.assertEqual(packed, unpacked.pack())
+        assert packed == unpacked.pack()
 
     def test_minimum_size(self):
         """Test struct minimum size."""
         if self._min_size is None:
-            raise self.skipTest('minimum size was not set.')
+            raise pytest.skip('minimum size was not set.')
         obj = TestStruct._msg_cls()
-        self.assertEqual(obj.get_size(), self._min_size)
+        assert obj.get_size() == self._min_size

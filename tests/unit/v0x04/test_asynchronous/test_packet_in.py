@@ -1,4 +1,5 @@
 """Packet in message tests."""
+import pytest
 from pyof.v0x04.asynchronous.packet_in import PacketIn, PacketInReason
 from pyof.v0x04.common.constants import OFP_NO_BUFFER
 from pyof.v0x04.common.flow_match import (
@@ -11,7 +12,7 @@ class TestPacketInRaw(TestStruct):
     """Test PacketIn using a dump file."""
 
     @classmethod
-    def setUpClass(cls):
+    def setup_class(cls):
         """Configure raw file and its object in parent class (TestDump)."""
         super().setUpClass()
         super().set_raw_dump_file('v0x04', 'ofpt_packet_in')
@@ -27,12 +28,12 @@ class TestPacketInRaw(TestStruct):
         try:
             msg = self.get_raw_dump().read()
         except FileNotFoundError:
-            raise self.skipTest('No raw dump file found.')
+            raise pytest.skip('No raw dump file found.')
         else:
             max_valid = int(PortNo.OFPP_MAX.value) - 1
             msg = self.get_raw_object()
             if msg.in_port in (1, max_valid):
-                self.assertTrue(msg.is_valid())
+                assert msg.is_valid()
 
 
 def _new_match():

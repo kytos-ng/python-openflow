@@ -8,7 +8,7 @@ class TestErrorMessage(TestStruct):
     """Test the Error Message."""
 
     @classmethod
-    def setUpClass(cls):
+    def setup_class(cls):
         """Setup TestStruct."""
         super().setUpClass()
         super().set_raw_dump_file('v0x01', 'ofpt_error_msg')
@@ -30,4 +30,4 @@ class TestErrorMessage(TestStruct):
         actual = ErrorMsg(xid=24)
         actual.unpack(expected[8:])
 
-        self.assertEqual(actual, error_msg)
+        assert actual == error_msg

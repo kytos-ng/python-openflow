@@ -1,11 +1,12 @@
 """Automate struct tests."""
+import pytest
 import unittest
 
 from pyof.foundation.base import GenericMessage
 from tests.unit.raw_dump import RawDump
 
 
-class TestStruct(unittest.TestCase):
+class TestStruct:
     """Run tests related to struct packing and unpacking.
 
     Test the lib with raw dump files from an OpenFlow switch. We assume the
@@ -147,7 +148,7 @@ class TestStruct(unittest.TestCase):
         try:
             file_bytes = self.get_raw_dump().read()
         except FileNotFoundError:
-            raise self.skipTest('No raw dump file found.')
+            raise pytest.skip('No raw dump file found.')
 
         pyof_obj = self.get_raw_object()
         self._test_pack(pyof_obj, file_bytes)
@@ -171,12 +172,12 @@ class TestStruct(unittest.TestCase):
             bytes2unpack = bytes2unpack[8:unpacked.header.length.value]
         unpacked.unpack(bytes2unpack)
 
-        self.assertEqual(pyof_obj, unpacked)
-        self.assertEqual(pyof_obj.get_size(), unpacked.get_size())
+        assert pyof_obj == unpacked
+        assert pyof_obj.get_size() == unpacked.get_size()
 
     def test_minimum_size(self):
         """Test struct minimum size."""
         obj = TestStruct._msg_cls()
         if self._min_size is None:
             raise Exception(f'{self.__class__.__name__}._min_size is not set')
-        self.assertEqual(obj.get_size(), self._min_size)
+        assert obj.get_size() == self._min_size

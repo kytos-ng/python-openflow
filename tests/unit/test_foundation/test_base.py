@@ -4,10 +4,10 @@ import unittest
 from pyof.foundation import base, basic_types
 
 
-class TestGenericStruct(unittest.TestCase):
+class TestGenericStruct:
     """Testing GenericStruct class."""
 
-    def setUp(self):
+    def setup_method(self):
         """Basic Test Setup."""
         class AttributeA(base.GenericStruct):
             """Example class."""
@@ -52,18 +52,18 @@ class TestGenericStruct(unittest.TestCase):
         """[Foundation/Base/GenericStruct] - Attributes Creation."""
         message1 = self.MyMessage()
         message2 = self.MyMessage()
-        self.assertIsNot(message1, message2)
-        self.assertIsNot(message1.i, message2.i)
-        self.assertIsNot(message1.a, message2.a)
-        self.assertIsNot(message1.b, message2.b)
-        self.assertIsNot(message1.a.a1, message2.a.a1)
-        self.assertIsNot(message1.a.a2, message2.a.a2)
-        self.assertIsNot(message1.b.c, message2.b.c)
-        self.assertIsNot(message1.b.c.c1, message2.b.c.c1)
-        self.assertIsNot(message1.b.c.c2, message2.b.c.c2)
+        assert message1 is not message2
+        assert message1.i is not message2.i
+        assert message1.a is not message2.a
+        assert message1.b is not message2.b
+        assert message1.a.a1 is not message2.a.a1
+        assert message1.a.a2 is not message2.a.a2
+        assert message1.b.c is not message2.b.c
+        assert message1.b.c.c1 is not message2.b.c.c1
+        assert message1.b.c.c2 is not message2.b.c.c2
 
 
-class TestGenericType(unittest.TestCase):
+class TestGenericType:
     """Testing GenericType class."""
 
     def test_basic_operator(self):
@@ -71,27 +71,27 @@ class TestGenericType(unittest.TestCase):
         a = basic_types.UBInt32(1)
         b = basic_types.UBInt32(2)
 
-        self.assertEqual(a + 1, 2)
-        self.assertEqual(1 + a, 2)
-        self.assertEqual(b + 1, 3)
-        self.assertEqual(1 + b, 3)
+        assert a + 1 == 2
+        assert 1 + a == 2
+        assert b + 1 == 3
+        assert 1 + b == 3
 
-        self.assertEqual(a - 1, 0)
-        self.assertEqual(1 - a, 0)
-        self.assertEqual(b - 1, 1)
-        self.assertEqual(1 - b, 1)
+        assert a - 1 == 0
+        assert 1 - a == 0
+        assert b - 1 == 1
+        assert 1 - b == 1
 
-        self.assertEqual(a & 1, 1)
-        self.assertEqual(1 & a, 1)
-        self.assertEqual(b & 1, 0)
-        self.assertEqual(1 & b, 0)
+        assert a & 1 == 1
+        assert 1 & a == 1
+        assert b & 1 == 0
+        assert 1 & b == 0
 
-        self.assertEqual(a | 1, 1)
-        self.assertEqual(1 | a, 1)
-        self.assertEqual(b | 1, 3)
-        self.assertEqual(1 | b, 3)
+        assert a | 1 == 1
+        assert 1 | a == 1
+        assert b | 1 == 3
+        assert 1 | b == 3
 
-        self.assertEqual(a ^ 1, 0)
-        self.assertEqual(1 ^ a, 0)
-        self.assertEqual(b ^ 1, 3)
-        self.assertEqual(1 ^ b, 3)
+        assert a ^ 1 == 0
+        assert 1 ^ a == 0
+        assert b ^ 1 == 3
+        assert 1 ^ b == 3

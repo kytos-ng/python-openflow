@@ -1,4 +1,5 @@
 """Packet out message tests."""
+import pytest
 from pyof.foundation.exceptions import ValidationError
 from pyof.v0x01.common.action import ActionOutput
 from pyof.v0x01.common.phy_port import Port
@@ -14,7 +15,7 @@ class TestPacketOut(TestStruct):
     """
 
     @classmethod
-    def setUpClass(cls):
+    def setup_class(cls):
         """Configure raw file and its object in parent class (TestDump)."""
         super().setUpClass()
         super().set_raw_dump_file('v0x01', 'ofpt_packet_out')
@@ -23,7 +24,7 @@ class TestPacketOut(TestStruct):
                                     actions=_get_actions())
         super().set_minimum_size(16)
 
-    def setUp(self):
+    def setup_method(self):
         """Run before every test."""
         self.message = self.get_raw_object()
 
@@ -32,7 +33,7 @@ class TestPacketOut(TestStruct):
         valid = (Port.OFPP_LOCAL, Port.OFPP_CONTROLLER, Port.OFPP_NONE)
         for in_port in valid:
             self.message.in_port = in_port
-            self.assertTrue(self.message.is_valid())
+            assert self.message.is_valid()
 
     def test_invalid_virtual_in_ports(self):
         """Invalid virtual ports as defined in 1.0.1 spec."""
@@ -40,23 +41,23 @@ class TestPacketOut(TestStruct):
                    Port.OFPP_FLOOD, Port.OFPP_ALL)
         for in_port in invalid:
             self.message.in_port = in_port
-            self.assertFalse(self.message.is_valid())
-            self.assertRaises(ValidationError, self.message.validate)
+            assert not self.message.is_valid()
+            pytest.raises(ValidationError, self.message.validate)
 
     def test_valid_physical_in_ports(self):
         """Physical port limits from 1.0.0 spec."""
         max_valid = int(Port.OFPP_MAX.value)
         for in_port in (1, max_valid):
             self.message.in_port = in_port
-            self.assertTrue(self.message.is_valid())
+            assert self.message.is_valid()
 
     def test_invalid_physical_in_port(self):
         """Physical port limits from 1.0.0 spec."""
         max_valid = int(Port.OFPP_MAX.value)
         for in_port in (-1, 0, max_valid + 1, max_valid + 2):
             self.message.in_port = in_port
-            self.assertFalse(self.message.is_valid())
-            self.assertRaises(ValidationError, self.message.validate)
+            assert not self.message.is_valid()
+            pytest.raises(ValidationError, self.message.validate)
 
 
 def _get_actions():

@@ -1,13 +1,14 @@
 """Testing Queue structure."""
+import pytest
 import unittest
 
 from pyof.v0x01.common import queue
 
 
-class TestQueuePropHeader(unittest.TestCase):
+class TestQueuePropHeader:
     """Test QueuePropHeader."""
 
-    def setUp(self):
+    def setup_method(self):
         """Basic setup for test."""
         self.message = queue.QueuePropHeader()
         self.message.queue_property = queue.QueueProperties.OFPQT_MIN_RATE
@@ -15,23 +16,23 @@ class TestQueuePropHeader(unittest.TestCase):
 
     def test_get_size(self):
         """[Common/QueuePropHeader] - size 8."""
-        self.assertEqual(self.message.get_size(), 8)
+        assert self.message.get_size() == 8
 
-    @unittest.skip('Not yet implemented')
+    @pytest.mark.skip('Not yet implemented')
     def test_pack(self):
         """[Common/QueuePropHeader] - packing."""
         pass
 
-    @unittest.skip('Not yet implemented')
+    @pytest.mark.skip('Not yet implemented')
     def test_unpack(self):
         """[Common/QueuePropHeader] - unpacking."""
         pass
 
 
-class TestPacketQueue(unittest.TestCase):
+class TestPacketQueue:
     """TestPacketQueue."""
 
-    def setUp(self):
+    def setup_method(self):
         """Basic setup for test."""
         self.message = queue.PacketQueue()
         self.message.queue_id = 1
@@ -39,37 +40,37 @@ class TestPacketQueue(unittest.TestCase):
 
     def test_get_size(self):
         """[Common/PacketQueue] - size 8."""
-        self.assertEqual(self.message.get_size(), 8)
+        assert self.message.get_size() == 8
 
-    @unittest.skip('Not yet implemented')
+    @pytest.mark.skip('Not yet implemented')
     def test_pack(self):
         """[Common/PacketQueue] - packing."""
         pass
 
-    @unittest.skip('Not yet implemented')
+    @pytest.mark.skip('Not yet implemented')
     def test_unpack(self):
         """[Common/PacketQueue] - unpacking."""
         pass
 
 
-class TestQueuePropMinRate(unittest.TestCase):
+class TestQueuePropMinRate:
     """Test QueuePropMinRate."""
 
-    def setUp(self):
+    def setup_method(self):
         """Basic setup for test."""
         self.message = queue.QueuePropMinRate()
         self.message.rate = 1000
 
     def test_get_size(self):
         """[Common/PropMinRate] - size 16."""
-        self.assertEqual(self.message.get_size(), 16)
+        assert self.message.get_size() == 16
 
-    @unittest.skip('Not yet implemented')
+    @pytest.mark.skip('Not yet implemented')
     def test_pack(self):
         """[Common/PropMinRate] - packing."""
         pass
 
-    @unittest.skip('Not yet implemented')
+    @pytest.mark.skip('Not yet implemented')
     def test_unpack(self):
         """[Common/PropMinRate] - unpacking."""
         pass
