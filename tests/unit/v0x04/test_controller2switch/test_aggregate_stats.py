@@ -2,23 +2,21 @@
 from pyof.v0x04.controller2switch.common import MultipartType
 from pyof.v0x04.controller2switch.multipart_reply import (
     AggregateStatsReply, MultipartReply)
-from tests.unit.test_struct import TestStruct
+from tests.unit.test_struct import StructTest
 
 
-class TestAggregateStats(TestStruct):
+class TestAggregateStats(StructTest):
     """Aggregate stats message."""
 
-    @classmethod
-    def setUpClass(cls):
+    def setup_method(self):
         """Configure raw file and its object in parent class (TestDump)."""
         mp_type = MultipartType.OFPMP_AGGREGATE
-        super().setUpClass()
-        super().set_raw_dump_file('v0x04', 'ofpt_aggregate_stats')
-        super().set_raw_dump_object(MultipartReply, xid=1,
+        self.set_raw_dump_file('v0x04', 'ofpt_aggregate_stats')
+        self.set_raw_dump_object(MultipartReply, xid=1,
                                     multipart_type=mp_type,
                                     flags=0,
                                     body=_get_body())
-        super().set_minimum_size(16)
+        self.set_minimum_size(16)
 
 
 def _get_body():

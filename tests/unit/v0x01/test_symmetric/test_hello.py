@@ -1,15 +1,13 @@
 """Hello message tests."""
 from pyof.v0x01.symmetric.hello import Hello
-from tests.unit.test_struct import TestStruct
+from tests.unit.test_struct import StructTest
 
 
-class TestHello(TestStruct):
+class TestHello(StructTest):
     """Hello message tests (also those in :class:`.TestDump`)."""
 
-    @classmethod
-    def setUpClass(cls):
+    def setup_method(self):
         """Configure raw file and its object in parent class (TestDump)."""
-        super().setUpClass()
-        super().set_raw_dump_file('v0x01', 'ofpt_hello')
-        super().set_raw_dump_object(Hello, xid=1)
-        super().set_minimum_size(8)
+        self.set_raw_dump_file('v0x01', 'ofpt_hello')
+        self.set_raw_dump_object(Hello, xid=1)
+        self.set_minimum_size(8)

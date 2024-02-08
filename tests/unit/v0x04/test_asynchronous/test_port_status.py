@@ -2,19 +2,17 @@
 from pyof.foundation.basic_types import HWAddress
 from pyof.v0x04.asynchronous.port_status import PortReason, PortStatus
 from pyof.v0x04.common.port import Port, PortFeatures, PortState
-from tests.unit.test_struct import TestStruct
+from tests.unit.test_struct import StructTest
 
 
-class TestPortStatus(TestStruct):
+class TestPortStatus(StructTest):
     """Test the Port Status message."""
 
-    @classmethod
-    def setUpClass(cls):
+    def setup_method(self):
         """Configure raw file and its object in parent class (TestDump)."""
-        super().setUpClass()
-        super().set_raw_dump_file('v0x04', 'ofpt_port_status')
-        super().set_raw_dump_object(_new_portstatus)
-        super().set_minimum_size(80)
+        self.set_raw_dump_file('v0x04', 'ofpt_port_status')
+        self.set_raw_dump_object(_new_portstatus)
+        self.set_minimum_size(80)
 
 
 def _new_portstatus():

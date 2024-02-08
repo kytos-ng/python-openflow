@@ -1,15 +1,13 @@
 """Queue Stat Request message."""
 from pyof.v0x04.controller2switch.multipart_request import QueueStatsRequest
-from tests.unit.test_struct import TestStruct
+from tests.unit.test_struct import StructTest
 
 
-class TestQueueStatsRequest(TestStruct):
+class TestQueueStatsRequest(StructTest):
     """Queue Stat Request message."""
 
-    @classmethod
-    def setUpClass(cls):
+    def setup_method(self):
         """Configure raw file and its object in parent class (TestDump)."""
-        super().setUpClass()
-        super().set_raw_dump_file('v0x04', 'ofpt_queue_stats_request')
-        super().set_raw_dump_object(QueueStatsRequest)
-        super().set_minimum_size(8)
+        self.set_raw_dump_file('v0x04', 'ofpt_queue_stats_request')
+        self.set_raw_dump_object(QueueStatsRequest)
+        self.set_minimum_size(8)

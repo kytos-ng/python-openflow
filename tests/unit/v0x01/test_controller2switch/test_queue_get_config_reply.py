@@ -3,21 +3,19 @@ from pyof.v0x01.common.phy_port import Port
 from pyof.v0x01.common.queue import (
     PacketQueue, QueueProperties, QueuePropHeader)
 from pyof.v0x01.controller2switch import queue_get_config_reply
-from tests.unit.test_struct import TestStruct
+from tests.unit.test_struct import StructTest
 
 
-class TestQueueGetConfigReply(TestStruct):
+class TestQueueGetConfigReply(StructTest):
     """Test for QueueGetConfigReply message."""
 
-    @classmethod
-    def setUpClass(cls):
+    def setup_method(self):
         """[Controller2Switch/QueueGetConfigReply] - size 16."""
-        super().setUpClass()
-        super().set_raw_dump_file('v0x01', 'ofpt_queue_get_config_reply')
-        super().set_raw_dump_object(queue_get_config_reply.QueueGetConfigReply,
+        self.set_raw_dump_file('v0x01', 'ofpt_queue_get_config_reply')
+        self.set_raw_dump_object(queue_get_config_reply.QueueGetConfigReply,
                                     xid=1, port=Port.OFPP_ALL,
                                     queues=_get_packet_queue())
-        super().set_minimum_size(16)
+        self.set_minimum_size(16)
 
 
 def _get_packet_queue():

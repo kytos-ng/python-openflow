@@ -2,22 +2,19 @@
 from pyof.v0x04.controller2switch.multipart_request import (
     MultipartRequest, MultipartRequestFlags, MultipartType, PortStatsRequest,
     TableFeatures)
-from tests.unit.v0x04.test_struct import TestStruct
+from tests.unit.v0x04.test_struct import StructTest
 
 
-class TestMultipartRequest(TestStruct):
+class TestMultipartRequest(StructTest):
     """Test the MultipartRequest message."""
 
-    @classmethod
-    def setUpClass(cls):
+    def setup_method(self):
         """Configure raw file and its object in parent class (TestDump)."""
-        super().setUpClass()
-
-        super().set_message(MultipartRequest, xid=16,
+        self.set_message(MultipartRequest, xid=16,
                             multipart_type=MultipartType.OFPMP_TABLE_FEATURES,
                             flags=MultipartRequestFlags.OFPMPF_REQ_MORE,
                             body=b'')
-        super().set_minimum_size(16)
+        self.set_minimum_size(16)
 
     @staticmethod
     def get_attributes(multipart_type=MultipartType.OFPMP_DESC,

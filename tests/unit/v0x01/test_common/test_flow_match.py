@@ -1,13 +1,13 @@
 """Testing FlowMatch structure."""
-import unittest
+import pytest
 
 from pyof.v0x01.common import flow_match
 
 
-class TestMatch(unittest.TestCase):
+class TestMatch:
     """Test Match structure."""
 
-    def setUp(self):
+    def setup_method(self):
         """Basic setup for test."""
         self.message = flow_match.Match()
         self.message.in_port = 22
@@ -25,21 +25,21 @@ class TestMatch(unittest.TestCase):
 
     def test_get_size(self):
         """[Common/FlowMatch] - size 40."""
-        self.assertEqual(self.message.get_size(), 40)
+        assert self.message.get_size() == 40
 
     def test_pack_unpack(self):
         """[Common/FlowMatch] - packing and unpacking."""
         pack = self.message.pack()
         unpacked = flow_match.Match()
         unpacked.unpack(pack)
-        self.assertEqual(self.message.pack(), unpacked.pack())
+        assert self.message.pack() == unpacked.pack()
 
-    @unittest.skip('Not yet implemented')
+    @pytest.mark.skip('Not yet implemented')
     def test_pack(self):
         """[Common/FlowMatch] - packing."""
         pass
 
-    @unittest.skip('Not yet implemented')
+    @pytest.mark.skip('Not yet implemented')
     def test_unpack(self):
         """[Common/FlowMatch] - unpacking."""
         pass

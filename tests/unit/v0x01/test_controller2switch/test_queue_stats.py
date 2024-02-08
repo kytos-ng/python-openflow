@@ -1,21 +1,19 @@
 """Test for QueueStats."""
 from pyof.v0x01.controller2switch.common import QueueStats, StatsType
 from pyof.v0x01.controller2switch.stats_reply import StatsReply
-from tests.unit.test_struct import TestStruct
+from tests.unit.test_struct import StructTest
 
 
-class TestQueueStats(TestStruct):
+class TestQueueStats(StructTest):
     """Test for QueueStats."""
 
-    @classmethod
-    def setUpClass(cls):
+    def setup_method(self):
         """[Controller2Switch/QueueStats] - size 32."""
-        super().setUpClass()
-        super().set_raw_dump_file('v0x01', 'ofpt_queue_stats')
-        super().set_raw_dump_object(StatsReply, xid=7,
+        self.set_raw_dump_file('v0x01', 'ofpt_queue_stats')
+        self.set_raw_dump_object(StatsReply, xid=7,
                                     body_type=StatsType.OFPST_QUEUE,
                                     flags=0, body=_get_queue_stats())
-        super().set_minimum_size(12)
+        self.set_minimum_size(12)
 
 
 def _get_queue_stats():

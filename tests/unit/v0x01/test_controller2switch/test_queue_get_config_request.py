@@ -1,17 +1,15 @@
 """Test for QueueGetConfigRequest message."""
 from pyof.v0x01.common.phy_port import Port
 from pyof.v0x01.controller2switch import queue_get_config_request as request
-from tests.unit.test_struct import TestStruct
+from tests.unit.test_struct import StructTest
 
 
-class TestQueueGetConfigRequest(TestStruct):
+class TestQueueGetConfigRequest(StructTest):
     """Test for QueueGetConfigRequest message."""
 
-    @classmethod
-    def setUpClass(cls):
+    def setup_method(self):
         """[Controller2Switch/QueueGetConfigRequest] - size 12."""
-        super().setUpClass()
-        super().set_raw_dump_file('v0x01', 'ofpt_queue_get_config_request')
-        super().set_raw_dump_object(request.QueueGetConfigRequest,
+        self.set_raw_dump_file('v0x01', 'ofpt_queue_get_config_request')
+        self.set_raw_dump_object(request.QueueGetConfigRequest,
                                     xid=1, port=Port.OFPP_MAX)
-        super().set_minimum_size(12)
+        self.set_minimum_size(12)

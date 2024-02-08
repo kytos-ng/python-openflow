@@ -2,25 +2,23 @@
 from pyof.v0x04.asynchronous.flow_removed import FlowRemoved, FlowRemovedReason
 from pyof.v0x04.common.flow_match import (
     Match, MatchType, OxmClass, OxmOfbMatchField, OxmTLV)
-from tests.unit.test_struct import TestStruct
+from tests.unit.test_struct import StructTest
 
 
-class TestFlowRemovedMsg(TestStruct):
+class TestFlowRemovedMsg(StructTest):
     """FlowRemoved message tests (also those in :class:`.TestDump`)."""
 
-    @classmethod
-    def setUpClass(cls):
+    def setup_method(self):
         """Configure raw file and its object in parent class (TestDump)."""
-        super().setUpClass()
-        super().set_raw_dump_file('v0x04', 'ofpt_flow_removed')
-        super().set_raw_dump_object(FlowRemoved, xid=0,
+        self.set_raw_dump_file('v0x04', 'ofpt_flow_removed')
+        self.set_raw_dump_object(FlowRemoved, xid=0,
                                     cookie=0x0000000000000000, priority=1000,
                                     reason=FlowRemovedReason.OFPRR_DELETE,
                                     table_id=0, duration_sec=77,
                                     duration_nsec=559000000, idle_timeout=0,
                                     hard_timeout=0, packet_count=0,
                                     byte_count=0, match=_new_match())
-        super().set_minimum_size(56)
+        self.set_minimum_size(56)
 
 
 def _new_match():

@@ -6,21 +6,20 @@ from pyof.v0x04.common.flow_match import (
     Match, MatchType, OxmClass, OxmOfbMatchField, OxmTLV)
 from pyof.v0x04.common.port import PortNo
 from pyof.v0x04.controller2switch.flow_mod import FlowMod, FlowModCommand
-from tests.unit.test_struct import TestStruct
+from tests.unit.test_struct import StructTest
 
 
-class TestFlowMod(TestStruct):
+class TestFlowMod(StructTest):
     """FlowMod test."""
 
-    def test_min_size(self):
-        """Test struct minimum size."""
-        super().set_raw_dump_file('v0x04', 'ofpt_flow_mod')
-        super().set_raw_dump_object(FlowMod, xid=2219910763,
+    def setup_method(self):
+        self.set_raw_dump_file('v0x04', 'ofpt_flow_mod')
+        self.set_raw_dump_object(FlowMod, xid=2219910763,
                                     command=FlowModCommand.OFPFC_ADD,
                                     priority=1000,
                                     match=_new_match(),
                                     instructions=_new_list_of_instructions())
-        super().set_minimum_size(56)
+        self.set_minimum_size(56)
 
 
 def _new_match():
