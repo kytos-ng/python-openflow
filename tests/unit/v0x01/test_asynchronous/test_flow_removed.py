@@ -2,15 +2,14 @@
 from pyof.foundation.basic_types import HWAddress, IPAddress
 from pyof.v0x01.asynchronous.flow_removed import FlowRemoved, FlowRemovedReason
 from pyof.v0x01.common.flow_match import Match
-from tests.unit.test_struct import TestStruct
+from tests.unit.test_struct import StructTest
 
 
-class TestFlowRemoved(TestStruct):
+class TestFlowRemoved(StructTest):
     """Test the FlowRemoved message."""
 
-    @classmethod
-    def setUpClass(cls):
-        """Setup TestStruct."""
+    def setup_method(self):
+        """Setup StructTest."""
         reason = FlowRemovedReason.OFPRR_IDLE_TIMEOUT
         match = Match(in_port=80, dl_vlan=1, dl_vlan_pcp=1, dl_type=1,
                       nw_tos=1, nw_proto=1, tp_src=80, tp_dst=80,
@@ -19,11 +18,10 @@ class TestFlowRemoved(TestStruct):
                       nw_src=IPAddress('192.168.0.1'),
                       nw_dst=IPAddress('192.168.0.2'))
 
-        super().setUpClass()
-        super().set_raw_dump_file('v0x01', 'ofpt_flow_removed')
-        super().set_raw_dump_object(FlowRemoved, xid=12,
+        self.set_raw_dump_file('v0x01', 'ofpt_flow_removed')
+        self.set_raw_dump_object(FlowRemoved, xid=12,
                                     match=match, cookie=0, priority=1,
                                     reason=reason, duration_sec=4,
                                     duration_nsec=23, idle_timeout=9,
                                     packet_count=10, byte_count=4)
-        super().set_minimum_size(88)
+        self.set_minimum_size(88)

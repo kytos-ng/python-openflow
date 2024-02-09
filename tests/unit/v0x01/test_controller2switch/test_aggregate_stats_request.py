@@ -4,24 +4,22 @@ from pyof.v0x01.common.phy_port import Port
 from pyof.v0x01.controller2switch.common import (
     AggregateStatsRequest, StatsType)
 from pyof.v0x01.controller2switch.stats_request import StatsRequest
-from tests.unit.test_struct import TestStruct
+from tests.unit.test_struct import StructTest
 
 
-class TestAggregateStatsRequest(TestStruct):
+class TestAggregateStatsRequest(StructTest):
     """Test class for TestAggregateStatsRequest."""
 
-    @classmethod
-    def setUpClass(cls):
+    def setup_method(self):
         """[Controller2Switch/AggregateStatsRequest] - size 44."""
         request = AggregateStatsRequest(table_id=1, out_port=Port.OFPP_NONE,
                                         match=_get_match())
 
-        super().setUpClass()
-        super().set_raw_dump_file('v0x01', 'ofpt_aggregate_request')
-        super().set_raw_dump_object(StatsRequest, xid=17,
+        self.set_raw_dump_file('v0x01', 'ofpt_aggregate_request')
+        self.set_raw_dump_object(StatsRequest, xid=17,
                                     body_type=StatsType.OFPST_AGGREGATE,
                                     flags=0, body=request)
-        super().set_minimum_size(12)
+        self.set_minimum_size(12)
 
 
 def _get_match():

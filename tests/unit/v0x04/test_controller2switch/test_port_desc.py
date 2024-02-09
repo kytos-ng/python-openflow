@@ -5,23 +5,21 @@ from pyof.v0x04.common.port import (
     ListOfPorts, Port, PortConfig, PortFeatures, PortNo, PortState)
 from pyof.v0x04.controller2switch.common import MultipartType
 from pyof.v0x04.controller2switch.multipart_reply import MultipartReply
-from tests.unit.test_struct import TestStruct
+from tests.unit.test_struct import StructTest
 
 
-class TestPortDesc(TestStruct):
+class TestPortDesc(StructTest):
     """Test PortDesc."""
 
-    @classmethod
-    def setUpClass(cls):
+    def setup_method(self):
         """Configure raw file and its object in parent class (TestDump)."""
         mp_type = MultipartType.OFPMP_PORT_DESC
-        super().setUpClass()
-        super().set_raw_dump_file('v0x04', 'ofpt_port_desc')
-        super().set_raw_dump_object(MultipartReply, xid=1917225664,
+        self.set_raw_dump_file('v0x04', 'ofpt_port_desc')
+        self.set_raw_dump_object(MultipartReply, xid=1917225664,
                                     multipart_type=mp_type,
                                     flags=0,
                                     body=_get_body())
-        super().set_minimum_size(16)
+        self.set_minimum_size(16)
 
 
 def _get_body():

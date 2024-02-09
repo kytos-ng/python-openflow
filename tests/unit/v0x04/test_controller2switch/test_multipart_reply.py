@@ -3,21 +3,19 @@
 from pyof.v0x04.controller2switch.common import MultipartType
 from pyof.v0x04.controller2switch.multipart_reply import (
     Desc, MultipartReply, MultipartReplyFlags)
-from tests.unit.v0x04.test_struct import TestStruct
+from tests.unit.v0x04.test_struct import StructTest
 
 
-class TestMultipartReply(TestStruct):
+class TestMultipartReply(StructTest):
     """Test MultipartReply."""
 
-    @classmethod
-    def setUpClass(cls):
+    def setup_method(self):
         """Configure raw file and its object in parent class (TestDump)."""
-        super().setUpClass()
-        super().set_message(MultipartReply, xid=16,
+        self.set_message(MultipartReply, xid=16,
                             multipart_type=MultipartType.OFPMP_METER_CONFIG,
                             flags=MultipartReplyFlags.OFPMPF_REPLY_MORE,
                             body=b'')
-        super().set_minimum_size(16)
+        self.set_minimum_size(16)
 
     @staticmethod
     def get_attributes(multipart_type=MultipartType.OFPMP_DESC,

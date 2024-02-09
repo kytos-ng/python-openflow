@@ -4,12 +4,12 @@ from pyof.v0x04.common.action import ActionOutput
 from pyof.v0x04.common.constants import OFP_NO_BUFFER
 from pyof.v0x04.common.port import PortNo
 from pyof.v0x04.controller2switch.packet_out import PacketOut
-from tests.unit.test_struct import TestStruct
-
+from tests.unit.test_struct import StructTest
+import pytest
 NO_RAW = 'No raw dump file found.'
 
 
-class TestPacketOut(TestStruct):
+class TestPacketOut(StructTest):
     """Packet out message tests (also those in :class:`.TestDump`).
 
     Attributes:
@@ -17,26 +17,26 @@ class TestPacketOut(TestStruct):
 
     """
 
-    @classmethod
-    def setUpClass(cls):
+    def setup_method(self):
         """Configure raw file and its object in parent class (TestDump)."""
-        super().setUpClass()
-        super().set_raw_dump_file('v0x04', 'ofpt_packet_out')
-        super().set_raw_dump_object(PacketOut, xid=2544740805,
+        self.set_raw_dump_file('v0x04', 'ofpt_packet_out')
+        self.set_raw_dump_object(PacketOut, xid=2544740805,
                                     buffer_id=OFP_NO_BUFFER,
                                     in_port=PortNo.OFPP_CONTROLLER,
                                     actions=_get_actions(), data=_get_data())
-        super().set_minimum_size(24)
+        self.set_minimum_size(24)
 
-    def test_valid_virtual_in_ports(self):
+    @pytest.mark.parametrize("port", 
+        [
+            PortNo.OFPP_LOCAL,
+            PortNo.OFPP_CONTROLLER,
+            PortNo.OFPP_ANY
+        ]
+    )
+    def test_valid_virtual_in_ports(self, port):
         """Valid virtual ports as defined in 1.3.0 spec."""
-        virtual_ports = (PortNo.OFPP_LOCAL, PortNo.OFPP_CONTROLLER,
-                         PortNo.OFPP_ANY)
-        for port in virtual_ports:
-            with self.subTest(port=port):
-                msg = PacketOut(in_port=port)
-                self.assertTrue(msg.is_valid(),
-                                f'{port.name} should be a valid in_port')
+        msg = PacketOut(in_port=port)
+        assert msg.is_valid(), f'{port.name} should be a valid in_port'
 
     def test_invalid_virtual_in_ports(self):
         """Invalid virtual ports as defined in 1.3.0 spec."""
@@ -50,8 +50,8 @@ class TestPacketOut(TestStruct):
             msg = self.get_raw_object()
             for in_port in invalid:
                 msg.in_port = in_port
-                self.assertFalse(msg.is_valid())
-                self.assertRaises(ValidationError, msg.validate)
+                assert not msg.is_valid()
+                pytest.raises(ValidationError, msg.validate)
 
     def test_valid_physical_in_ports(self):
         """Physical port limits from 1.3.0 spec."""
@@ -64,7 +64,7 @@ class TestPacketOut(TestStruct):
             msg = self.get_raw_object()
             for in_port in (1, max_valid):
                 msg.in_port = in_port
-                self.assertTrue(msg.is_valid())
+                assert msg.is_valid()
 
 
 def _get_actions():

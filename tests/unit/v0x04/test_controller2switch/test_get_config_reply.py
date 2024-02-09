@@ -1,15 +1,13 @@
 """Config Reply message tests."""
 from pyof.v0x04.controller2switch.get_config_reply import GetConfigReply
-from tests.unit.test_struct import TestStruct
+from tests.unit.test_struct import StructTest
 
 
-class TestGetConfigReply(TestStruct):
+class TestGetConfigReply(StructTest):
     """Config Reply message tests."""
 
-    @classmethod
-    def setUpClass(cls):
+    def setup_method(self):
         """Configure raw file and its object in parent class (TestDump)."""
-        super().setUpClass()
-        super().set_raw_dump_file('v0x04', 'ofpt_get_config_reply')
-        super().set_raw_dump_object(GetConfigReply, xid=1)
-        super().set_minimum_size(12)
+        self.set_raw_dump_file('v0x04', 'ofpt_get_config_reply')
+        self.set_raw_dump_object(GetConfigReply, xid=1)
+        self.set_minimum_size(12)

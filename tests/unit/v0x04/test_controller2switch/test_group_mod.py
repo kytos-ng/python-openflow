@@ -1,6 +1,4 @@
 """group_mod tests."""
-from unittest import TestCase
-
 from pyof.v0x04.controller2switch.group_mod import GroupMod
 from pyof.v0x04.common.action import (
     ActionExperimenterDefault, ActionSetField, ListOfActions)
@@ -10,28 +8,26 @@ from pyof.v0x04.controller2switch.common import Bucket
 from pyof.v0x04.controller2switch.group_mod import  ListOfBuckets
 
 
-class TestGroupMod(TestCase):
+class TestGroupMod:
     """group_mod tests."""
 
     def test_min_size(self):
         """Test minimum struct size."""
-        self.assertEqual(16, GroupMod().get_size())
+        assert 16 == GroupMod().get_size()
 
 
-class TestBucket(TestCase):
+class TestBucket:
     """bucket tests."""
 
     def test_min_size(self):
         """Test minimum struct size."""
-        self.assertEqual(16, Bucket().get_size())
+        assert 16 == Bucket().get_size()
 
 
-class TestListBuckets(TestCase):
+class TestListBuckets:
 
-    def setUp(self):
+    def setup_method(self):
         """Configure raw file and its object in parent class (TestDump)."""
-        super().setUp()
-
         self.oxmtlv1 = OxmTLV(oxm_class=OxmClass.OFPXMC_OPENFLOW_BASIC,
                          oxm_field=OxmOfbMatchField.OFPXMT_OFB_METADATA,
                          oxm_hasmask=False,
@@ -69,34 +65,34 @@ class TestListBuckets(TestCase):
         unpacked_buckets = ListOfBuckets()
         unpacked_buckets.unpack(buff)
 
-        self.assertEqual(len(unpacked_buckets), 3)
-        self.assertEqual(unpacked_buckets[0].length, 48)
-        self.assertEqual(unpacked_buckets[0].weight, 1)
-        self.assertEqual(len(unpacked_buckets[0].actions), 2)
-        self.assertEqual(unpacked_buckets[0].actions[0].field.oxm_value,
-                         self.oxmtlv1.oxm_value)
-        self.assertEqual(unpacked_buckets[0].actions[1].field.oxm_value,
-                         self.oxmtlv2.oxm_value)
+        assert len(unpacked_buckets) == 3
+        assert unpacked_buckets[0].length == 48
+        assert unpacked_buckets[0].weight == 1
+        assert len(unpacked_buckets[0].actions) == 2
+        assert unpacked_buckets[0].actions[0].field.oxm_value == \
+                         self.oxmtlv1.oxm_value
+        assert unpacked_buckets[0].actions[1].field.oxm_value == \
+                         self.oxmtlv2.oxm_value
 
-        self.assertEqual(unpacked_buckets[1].length, 80)
-        self.assertEqual(unpacked_buckets[1].weight, 2)
-        self.assertEqual(len(unpacked_buckets[1].actions), 4)
-        self.assertEqual(unpacked_buckets[1].actions[0].field.oxm_value,
-                         self.oxmtlv1.oxm_value)
-        self.assertEqual(unpacked_buckets[1].actions[1].field.oxm_value,
-                         self.oxmtlv2.oxm_value)
-        self.assertEqual(unpacked_buckets[1].actions[2].body,
-                         self.action3.body)
-        self.assertEqual(unpacked_buckets[1].actions[3].body,
-                         self.action4.body)
+        assert unpacked_buckets[1].length == 80
+        assert unpacked_buckets[1].weight == 2
+        assert len(unpacked_buckets[1].actions) == 4
+        assert unpacked_buckets[1].actions[0].field.oxm_value == \
+                         self.oxmtlv1.oxm_value
+        assert unpacked_buckets[1].actions[1].field.oxm_value == \
+                         self.oxmtlv2.oxm_value
+        assert unpacked_buckets[1].actions[2].body == \
+                         self.action3.body
+        assert unpacked_buckets[1].actions[3].body == \
+                         self.action4.body
 
-        self.assertEqual(unpacked_buckets[2].length, 48)
-        self.assertEqual(unpacked_buckets[2].weight, 3)
-        self.assertEqual(len(unpacked_buckets[2].actions), 2)
-        self.assertEqual(unpacked_buckets[2].actions[0].body,
-                         self.action3.body)
-        self.assertEqual(unpacked_buckets[2].actions[1].body,
-                         self.action4.body)
+        assert unpacked_buckets[2].length == 48
+        assert unpacked_buckets[2].weight == 3
+        assert len(unpacked_buckets[2].actions) == 2
+        assert unpacked_buckets[2].actions[0].body == \
+                         self.action3.body
+        assert unpacked_buckets[2].actions[1].body == \
+                         self.action4.body
 
     def test_buckets_one_item(self):
 
@@ -112,14 +108,14 @@ class TestListBuckets(TestCase):
         unpacked_buckets = ListOfBuckets()
         unpacked_buckets.unpack(buff)
 
-        self.assertEqual(len(unpacked_buckets), 1)
-        self.assertEqual(unpacked_buckets[0].length, 48)
-        self.assertEqual(unpacked_buckets[0].weight, 1)
-        self.assertEqual(len(unpacked_buckets[0].actions), 2)
-        self.assertEqual(unpacked_buckets[0].actions[0].field.oxm_value,
-                         self.oxmtlv1.oxm_value)
-        self.assertEqual(unpacked_buckets[0].actions[1].field.oxm_value,
-                         self.oxmtlv2.oxm_value)
+        assert len(unpacked_buckets) == 1
+        assert unpacked_buckets[0].length == 48
+        assert unpacked_buckets[0].weight == 1
+        assert len(unpacked_buckets[0].actions) == 2
+        assert unpacked_buckets[0].actions[0].field.oxm_value == \
+                         self.oxmtlv1.oxm_value
+        assert unpacked_buckets[0].actions[1].field.oxm_value == \
+                         self.oxmtlv2.oxm_value
 
     def test_buckets_no_action(self):
 
@@ -135,9 +131,9 @@ class TestListBuckets(TestCase):
         unpacked_buckets = ListOfBuckets()
         unpacked_buckets.unpack(buff)
 
-        self.assertEqual(len(unpacked_buckets), 1)
-        self.assertEqual(unpacked_buckets[0].length, 48)
-        self.assertEqual(unpacked_buckets[0].weight, 1)
-        self.assertEqual(len(unpacked_buckets[0].actions), 1)
-        self.assertEqual(unpacked_buckets[0].actions[0].field.oxm_value,
-                         self.oxmtlv1.oxm_value)
+        assert len(unpacked_buckets) == 1
+        assert unpacked_buckets[0].length == 48
+        assert unpacked_buckets[0].weight == 1
+        assert len(unpacked_buckets[0].actions) == 1
+        assert unpacked_buckets[0].actions[0].field.oxm_value == \
+                         self.oxmtlv1.oxm_value

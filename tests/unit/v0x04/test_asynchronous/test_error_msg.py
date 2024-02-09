@@ -2,22 +2,20 @@
 from pyof.foundation.exceptions import MethodNotImplemented
 from pyof.v0x04.asynchronous.error_msg import (
     ErrorExperimenterMsg, ErrorMsg, ErrorType, MeterModFailedCode)
-from tests.unit.test_struct import TestStruct
+from tests.unit.test_struct import StructTest
 
 
-class TestErrorMsg(TestStruct):
+class TestErrorMsg(StructTest):
     """ErroMsg message tests (also those in :class:`.TestDump`)."""
 
-    @classmethod
-    def setUpClass(cls):
+    def setup_method(self):
         """Configure raw file and its object in parent class (TestDump)."""
         error_type = ErrorType.OFPET_METER_MOD_FAILED
         code = MeterModFailedCode.OFPMMFC_UNKNOWN_METER
-        super().setUpClass()
-        super().set_raw_dump_file('v0x04', 'ofpt_error')
-        super().set_raw_dump_object(ErrorMsg, xid=1, error_type=error_type,
+        self.set_raw_dump_file('v0x04', 'ofpt_error')
+        self.set_raw_dump_object(ErrorMsg, xid=1, error_type=error_type,
                                     code=code, data=_get_data())
-        super().set_minimum_size(12)
+        self.set_minimum_size(12)
 
     @staticmethod
     def test_unpack():

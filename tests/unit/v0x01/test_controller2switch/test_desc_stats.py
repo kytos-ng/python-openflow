@@ -2,21 +2,19 @@
 from pyof.foundation.constants import DESC_STR_LEN
 from pyof.v0x01.controller2switch.common import DescStats, StatsType
 from pyof.v0x01.controller2switch.stats_reply import StatsReply
-from tests.unit.test_struct import TestStruct
+from tests.unit.test_struct import StructTest
 
 
-class TestDescStats(TestStruct):
+class TestDescStats(StructTest):
     """Test class for TestDescStats."""
 
-    @classmethod
-    def setUpClass(cls):
+    def setup_method(self):
         """[Controller2Switch/DescStats] - size 1056."""
-        super().setUpClass()
-        super().set_raw_dump_file('v0x01', 'ofpt_desc_stats_reply')
-        super().set_raw_dump_object(StatsReply, xid=14,
+        self.set_raw_dump_file('v0x01', 'ofpt_desc_stats_reply')
+        self.set_raw_dump_object(StatsReply, xid=14,
                                     body_type=StatsType.OFPST_DESC,
                                     flags=0, body=_get_desc_stats())
-        super().set_minimum_size(12)
+        self.set_minimum_size(12)
 
 
 def _get_desc_stats():

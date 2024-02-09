@@ -1,14 +1,14 @@
 """Testing VendorHeader message."""
 from pyof.v0x01.symmetric.vendor_header import VendorHeader
-from tests.unit.test_struct import TestStruct
+from tests.unit.test_struct import StructTest
+from pyof.v0x01.symmetric.hello import Hello
 
-
-class TestVendorHeader(TestStruct):
+class TestVendorHeader(StructTest):
     """Vendor message tests (also those in :class:`.TestDump`)."""
 
-    @classmethod
-    def setUpClass(cls):
-        super().set_minimum_size(8)
+    def setup_method(self):
+        self.set_raw_dump_object(Hello, xid=1)
+        self.set_minimum_size(8)
 
     def test_unpack(self):
         """Test unpack VendorHeader message."""

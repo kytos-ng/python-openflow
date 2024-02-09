@@ -1,11 +1,11 @@
 """Automate struct tests."""
-import unittest
+import pytest
 
 from pyof.foundation.base import GenericMessage
 from tests.unit.raw_dump import RawDump
 
 
-class TestStruct(unittest.TestCase):
+class StructTest:
     """Run tests related to struct packing and unpacking.
 
     Test the lib with raw dump files from an OpenFlow switch. We assume the
@@ -16,49 +16,28 @@ class TestStruct(unittest.TestCase):
     no parameters.
 
     To run these tests, just extends this class and call 2 methods in the
-    ``setUp`` method like the example.
+    ``setup_method`` method like the example.
 
     Example:
         .. code-block:: python3
 
-            class MyTest(TestDump):
-                @classmethod
-                def setUpClass(cls):
-                    super().setUpClass()
-                    super().set_raw_dump_file('v0x01', 'ofpt_barrier_reply')
+            class TestMine(StructTest):
+                def setup_method(self):
+                    self.set_raw_dump_file('v0x01', 'ofpt_barrier_reply')
                     # Create BarrierReply(xid=5) when needed
-                    super().set_raw_dump_object(BarrierReply, xid=5)
+                    selfset_raw_dump_object(BarrierReply, xid=5)
                     # As in spec: ``OFP_ASSERT(sizeof(struct ...) == ...);``
-                    super().set_minimum_size(8)
+                    self.set_minimum_size(8)
 
         To only test the minimum size and skip packing/unpacking:
 
         .. code-block:: python3
-            class MyTest(TestDump):
-                @classmethod
-                def setUpClass(cls):
-                    super().set_minimum_size(8, BarrierReply)
+            class TestMine(TestDump):
+                def setup_method(self):
+                    self.set_minimum_size(8, BarrierReply)
     """
 
-    def __init__(self, *args, **kwargs):
-        """Avoid that this class tests are executed.
-
-        The tests in this class are executed through the child, so there's no
-        no need for them to be executed once more through the parent.
-        """
-        super().__init__(*args, **kwargs)
-        # Override the run method, so it does nothing instead of running the
-        # tests (again).
-        if self.__class__ == TestStruct:
-            self.run = lambda *args, **kwargs: None
-
-    _new_raw_dump = None
-    _new_raw_object = None
-    _msg_cls = None
-    _min_size = None
-
-    @classmethod
-    def set_raw_dump_file(cls, version, basename):
+    def set_raw_dump_file(self, version, basename):
         """Set which raw dump the tests will use.
 
         Args:
@@ -67,10 +46,9 @@ class TestStruct(unittest.TestCase):
             basename (str): The raw filename without extension.
                 E.g. ``ofpt_echo_reply``.
         """
-        cls._new_raw_dump = lambda: RawDump(version, basename)
+        self._new_raw_dump = lambda: RawDump(version, basename)
 
-    @classmethod
-    def get_raw_dump(cls):
+    def get_raw_dump(self):
         """Return a new instance of :class:`.RawDump`.
 
         Use the parameters set in :meth:`set_raw_dump_file`.
@@ -80,12 +58,14 @@ class TestStruct(unittest.TestCase):
                 :meth:`set_raw_dump_file`.
 
         """
-        if cls._new_raw_dump is None:
+        try:
+            if self._new_raw_dump is None:
+                raise FileNotFoundError()
+        except AttributeError:
             raise FileNotFoundError()
-        return cls._new_raw_dump()
+        return self._new_raw_dump()
 
-    @classmethod
-    def set_raw_dump_object(cls, msg_cls, *args, **kwargs):
+    def set_raw_dump_object(self, msg_self, *args, **kwargs):
         """Set how to create the object that is dumped in a raw file.
 
         Args:
@@ -94,14 +74,13 @@ class TestStruct(unittest.TestCase):
                 object.
 
         Example:
-            ``super().__init__(BarrierReply, xid=5)`` will create
+            ``self.set_raw_dump_object(BarrierReply, xid=5)`` will create
             ``BarrierReply(xid=5)``.
         """
-        TestStruct._msg_cls = msg_cls
-        cls._new_raw_object = lambda: msg_cls(*args, **kwargs)
+        self._msg_self = msg_self
+        self._new_raw_object = lambda: msg_self(*args, **kwargs)
 
-    @classmethod
-    def get_raw_object(cls):
+    def get_raw_object(self):
         """Create a new object of the dumped message.
 
         Use the class and parameters set in :meth:`set_raw_dump_object`.
@@ -111,13 +90,12 @@ class TestStruct(unittest.TestCase):
                 :meth:`set_raw_dump_object`.
 
         """
-        pyof_obj = cls._new_raw_object()
+        pyof_obj = self._new_raw_object()
         if isinstance(pyof_obj, GenericMessage):
             pyof_obj.update_header_length()
         return pyof_obj
 
-    @classmethod
-    def set_minimum_size(cls, size, msg_cls=None):
+    def set_minimum_size(self, size, msg_self=None):
         """Set the struct minimum size.
 
         The minimum size can be found in OF spec. For example,
@@ -126,17 +104,17 @@ class TestStruct(unittest.TestCase):
 
         Args:
             size (int): The minimum size of the struct, in bytes.
-            msg_cls (class): The class (or function) to have its size checked.
+            msg_self (class): The class (or function) to have its size checked.
                 If None, use the same class set in :meth:`set_raw_dump_object`.
         """
-        cls._min_size = size
-        if msg_cls is not None:
-            TestStruct._msg_cls = msg_cls
+        self._min_size = size
+        if msg_self is not None:
+            self._msg_self = msg_self
 
     def _test_pack(self, obj, expected_bytes):
         """Check whether packed objects equals to dump file."""
         actual_bytes = obj.pack()
-        self.assertSequenceEqual(expected_bytes, actual_bytes)
+        assert expected_bytes == actual_bytes
 
     def test_raw_dump_file(self):
         """Object pack should equal file; file unpack should equal object.
@@ -147,7 +125,7 @@ class TestStruct(unittest.TestCase):
         try:
             file_bytes = self.get_raw_dump().read()
         except FileNotFoundError:
-            raise self.skipTest('No raw dump file found.')
+            raise pytest.skip('No raw dump file found.')
 
         pyof_obj = self.get_raw_object()
         self._test_pack(pyof_obj, file_bytes)
@@ -171,12 +149,12 @@ class TestStruct(unittest.TestCase):
             bytes2unpack = bytes2unpack[8:unpacked.header.length.value]
         unpacked.unpack(bytes2unpack)
 
-        self.assertEqual(pyof_obj, unpacked)
-        self.assertEqual(pyof_obj.get_size(), unpacked.get_size())
+        assert pyof_obj == unpacked
+        assert pyof_obj.get_size() == unpacked.get_size()
 
     def test_minimum_size(self):
         """Test struct minimum size."""
-        obj = TestStruct._msg_cls()
+        obj = self._msg_self()
         if self._min_size is None:
             raise Exception(f'{self.__class__.__name__}._min_size is not set')
-        self.assertEqual(obj.get_size(), self._min_size)
+        assert obj.get_size() == self._min_size

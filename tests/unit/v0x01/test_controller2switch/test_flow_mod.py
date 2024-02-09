@@ -3,33 +3,29 @@ from pyof.v0x01.common.action import ActionOutput
 from pyof.v0x01.common.flow_match import Match
 from pyof.v0x01.common.phy_port import Port
 from pyof.v0x01.controller2switch.flow_mod import FlowMod, FlowModCommand
-from tests.unit.test_struct import TestStruct
+from tests.unit.test_struct import StructTest
 
 
-class TestFlowAdd(TestStruct):
+class TestFlowAdd(StructTest):
     """Flow addition message tests (also those in :class:`.TestDump`)."""
 
-    @classmethod
-    def setUpClass(cls):
+    def setup_method(self):
         """Configure raw file and its object in parent class (TestDump)."""
-        super().setUpClass()
-        super().set_raw_dump_file('v0x01', 'ofpt_flow_add')
+        self.set_raw_dump_file('v0x01', 'ofpt_flow_add')
         kwargs = _get_flowmod_kwargs(FlowModCommand.OFPFC_ADD)
-        super().set_raw_dump_object(FlowMod, **kwargs)
-        super().set_minimum_size(72)
+        self.set_raw_dump_object(FlowMod, **kwargs)
+        self.set_minimum_size(72)
 
 
-class TestFlowDelete(TestStruct):
+class TestFlowDelete(StructTest):
     """Flow deletion message tests (also those in :class:`.TestDump`)."""
 
-    @classmethod
-    def setUpClass(cls):
+    def setup_method(self):
         """Configure raw file and its object in parent class (TestDump)."""
-        super().setUpClass()
-        super().set_raw_dump_file('v0x01', 'ofpt_flow_delete')
+        self.set_raw_dump_file('v0x01', 'ofpt_flow_delete')
         kwargs = _get_flowmod_kwargs(FlowModCommand.OFPFC_DELETE)
-        super().set_raw_dump_object(FlowMod, **kwargs)
-        super().set_minimum_size(72)
+        self.set_raw_dump_object(FlowMod, **kwargs)
+        self.set_minimum_size(72)
 
 
 def _get_flowmod_kwargs(command):

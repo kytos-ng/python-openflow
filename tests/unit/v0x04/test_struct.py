@@ -1,11 +1,9 @@
 """Automate struct tests."""
-import unittest
-
 from pyof.v0x04.common.header import Header
 from pyof.v0x04.common.utils import new_message_from_header
 
 
-class TestStruct(unittest.TestCase):
+class StructTest:
     """Run tests related to struct packing and unpacking.
 
     Test the lib with raw dump files from an OpenFlow switch. We assume the
@@ -16,48 +14,39 @@ class TestStruct(unittest.TestCase):
     no parameters.
 
     To run these tests, just extends this class and call 2 methods in the
-    ``setUp`` method like the example.
+    ``setup_method`` method like the example.
 
     Example:
         .. code-block:: python3
 
-            class MyTest(TestStruct):
-                @classmethod
-                def setUpClass(cls):
-                    super().setUpClass()
+            class TestMine(StructTest):
+                def setup_method(self):
                     # Create BarrierReply(xid=5)
-                    super().set_message(BarrierReply, xid=5)
+                    self.set_message(BarrierReply, xid=5)
                     # As in spec: ``OFP_ASSERT(sizeof(struct ...) == ...);``
-                    super().set_minimum_size(8)
+                    self.set_minimum_size(8)
 
         To only test the minimum size and skip packing/unpacking:
 
         .. code-block:: python3
-            class MyTest(TestStruct):
-                @classmethod
-                def setUpClass(cls):
-                    super().set_message(BarrierReply)
-                    super().set_minimum_size(8)
+            class TestMine(StructTest):
+                def setup_method(self):
+                    self.set_message(BarrierReply)
+                    self.set_minimum_size(8)
     """
 
-    def __init__(self, *args, **kwargs):
-        """The constructor will avoid that this class tests are executed.
+    def setup_method(self):
+        """This parent class will not perform tests because its name does not
+        start with "Test".
 
         The tests in this class are executed through the child, so there's no
         no need for them to be executed once more through the parent.
         """
-        super().__init__(*args, **kwargs)
-        # Override the run method, so it does nothing instead of running the
-        # tests (again).
-        if self.__class__ == TestStruct:
-            self.run = lambda *args, **kwargs: None
+        self._msg_self = None
+        self._msg_params = None
+        self._min_size = None
 
-    _msg_cls = None
-    _msg_params = None
-    _min_size = None
-
-    @classmethod
-    def set_message(cls, msg_cls, *args, **kwargs):
+    def set_message(self, msg_self, *args, **kwargs):
         """Set how to create the message object.
 
         Args:
@@ -65,14 +54,13 @@ class TestStruct(unittest.TestCase):
                 parameters to instantiate an object.
 
         Example:
-            ``super().__init__(BarrierReply, xid=5)`` will create
+            ``self.set_message(BarrierReply, xid=5)`` will create
             ``BarrierReply(xid=5)``.
         """
-        TestStruct._msg_cls = msg_cls
-        cls._msg_params = (args, kwargs)
+        self._msg_self = msg_self
+        self._msg_params = (args, kwargs)
 
-    @classmethod
-    def set_minimum_size(cls, size):
+    def set_minimum_size(self, size):
         """Set the struct minimum size (from spec).
 
         The minimum size can be found in OF spec. For example,
@@ -82,11 +70,11 @@ class TestStruct(unittest.TestCase):
         Args:
             size (int): The minimum size of the struct, in bytes.
         """
-        cls._min_size = size
+        self._min_size = size
 
     def test_pack_unpack(self):
         """Pack the message, unpack and check whether they are the same."""
-        if self._msg_cls:
+        if self._msg_self:
             args, kwargs = self._msg_params
             self._test_pack_unpack(*args, **kwargs)
 
@@ -96,7 +84,7 @@ class TestStruct(unittest.TestCase):
         Call this method multiple times if you want to test more than one
         object.
         """
-        obj = self._msg_cls(*args, **kwargs)
+        obj = self._msg_self(*args, **kwargs)
         packed = obj.pack()
         header = Header()
         header_size = header.get_size()
@@ -104,11 +92,11 @@ class TestStruct(unittest.TestCase):
         unpacked = new_message_from_header(header)
         unpacked.unpack(packed[header_size:])
 
-        self.assertEqual(packed, unpacked.pack())
+        assert packed == unpacked.pack()
 
     def test_minimum_size(self):
         """Test struct minimum size."""
         if self._min_size is None:
             raise self.skipTest('minimum size was not set.')
-        obj = TestStruct._msg_cls()
-        self.assertEqual(obj.get_size(), self._min_size)
+        obj = self._msg_self()
+        assert obj.get_size() == self._min_size
