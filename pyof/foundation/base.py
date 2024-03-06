@@ -281,10 +281,10 @@ class MetaStruct(type):
 
     # pylint: disable=unused-argument
     @classmethod
-    def __prepare__(cls, name, bases, **kwargs):
+    def __prepare__(mcs, name, bases, **kwargs):
         return OrderedDict()
 
-    def __new__(cls, name, bases, classdict, **kwargs):
+    def __new__(mcs, name, bases, classdict, **kwargs):
         """Inherit attributes from parent class and update their versions.
 
         Here is the moment that the new class is going to be created. During
@@ -330,7 +330,7 @@ class MetaStruct(type):
                                                                curr_version)
 
                     if attr_name == 'header':
-                        attr = cls._header_message_type_update(obj, attr)
+                        attr = mcs._header_message_type_update(obj, attr)
 
                     inherited_attributes.update([attr])
                 #: We are going to inherit just from the 'closest parent'
@@ -350,7 +350,7 @@ class MetaStruct(type):
             inherited_attributes.update(classdict)
             classdict = inherited_attributes
 
-        return super().__new__(cls, name, bases, classdict, **kwargs)
+        return super().__new__(mcs, name, bases, classdict, **kwargs)
 
     @staticmethod
     def _header_message_type_update(obj, attr):
@@ -864,7 +864,7 @@ class MetaBitMask(type):
     access object.ELEMENT and recover either values or names).
     """
 
-    def __new__(cls, name, bases, classdict):
+    def __new__(mcs, name, bases, classdict):
         """Convert class attributes into enum elements."""
         _enum = OrderedDict([(key, value) for key, value in classdict.items()
                              if key[0] != '_' and not
@@ -875,7 +875,7 @@ class MetaBitMask(type):
                          if key[0] == '_' or hasattr(value, '__call__') or
                          isinstance(value, property)}
             classdict['_enum'] = _enum
-        return type.__new__(cls, name, bases, classdict)
+        return type.__new__(mcs, name, bases, classdict)
 
     def __getattr__(cls, name):
         return cls._enum[name]
