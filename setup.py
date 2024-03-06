@@ -172,7 +172,7 @@ setup(name='python-openflow',
       classifiers=[
           'License :: OSI Approved :: MIT License',
           'Operating System :: POSIX :: Linux',
-          'Programming Language :: Python :: 3.9',
+          'Programming Language :: Python :: 3.11',
           'Topic :: System :: Networking',
           'Topic :: Software Development :: Libraries'
       ])

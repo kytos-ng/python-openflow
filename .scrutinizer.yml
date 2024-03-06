@@ -6,7 +6,7 @@ filter:
     paths: ["pyof/*", "tests/*"]
 build:
     environment:
-        python: 3.9.12
+        python: 3.11.8
         postgresql: false
         redis: false
     dependencies:
@@ -18,7 +18,7 @@ build:
         override:
             -
                 command: 'tox'
-                only_if: 'tox -a | grep -q py39'
+                only_if: 'tox -a | grep -q py311'
                 idle_timeout: 300
                 coverage:
                     file: '.coverage'

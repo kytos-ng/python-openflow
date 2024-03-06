@@ -29,7 +29,7 @@ Quick Start
 Installing
 ==========
 
-In order to use this software please install python3.9 into your
+In order to use this software please install python3.11 into your
 environment beforehand.
 
 We are doing a huge effort to make Kytos and its components available on all
