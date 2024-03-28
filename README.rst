@@ -51,15 +51,17 @@ procedure:
 .. code-block:: shell
 
    $ cd python-openflow
-   $ sudo python3 setup.py install
+   $ sudo python3 -m pip install .
 
 Alternatively, if you are a developer and want to install in develop mode:
 
 .. code-block:: shell
 
    $ cd python-openflow
-   $ pip3 install -r requirements/dev.txt
+   $ python3 -m pip install --editable .
 
+To install the kytos environment, please follow our
+`development environment setup <https://github.com/kytos-ng/documentation/blob/master/tutorials/napps/development_environment_setup.rst>`_.
 
 Basic Usage Example
 ===================
