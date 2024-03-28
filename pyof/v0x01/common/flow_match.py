@@ -57,7 +57,7 @@ class FlowWildCards(GenericBitMask):
     OFPFW_NW_TOS = 1 << 21
 
     #: Wildcard all fields.
-    OFPFW_ALL = ((1 << 22) - 1)
+    OFPFW_ALL = (1 << 22) - 1
 
 
 # Classes

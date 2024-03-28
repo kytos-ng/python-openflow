@@ -248,6 +248,7 @@ class Char(GenericType):
             end = begin + self.length
             unpacked_data = struct.unpack(self._fmt, buff[begin:end])[0]
         except struct.error:
+            # pylint: disable=broad-exception-raised
             raise Exception("%s: %s" % (offset, buff))
 
         self._value = unpacked_data.decode('ascii').rstrip('\0')
