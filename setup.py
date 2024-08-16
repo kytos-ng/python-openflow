@@ -34,9 +34,9 @@ class SimpleCommand(Command):
         Use *call* instead of *check_call* to ignore failures.
         """
 
-    def run_command(self, command_class):
+    def run_command(self, command):
         """Run another command with same __init__ arguments."""
-        command_class(*self.__args, **self.__kwargs).run()
+        command(*self.__args, **self.__kwargs).run()
 
     def initialize_options(self):
         """Set default values for options."""
