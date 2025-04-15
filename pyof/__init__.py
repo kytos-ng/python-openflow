@@ -3,4 +3,4 @@
 This package is a library that parses and creates OpenFlow Messages.
 It contains all implemented versions of OpenFlow protocol
 """
-__version__ = '2024.1.0'
+__version__ = '2025.1.0'
