@@ -22,7 +22,7 @@ __all__ = ('ConfigFlag', 'ControllerRole', 'TableFeaturePropType',
            'MultipartType', 'Bucket', 'BucketCounter', 'ListOfBucketCounter',
            'ExperimenterMultipartHeader', 'Property', 'InstructionsProperty',
            'NextTablesProperty', 'ActionsProperty', 'OxmProperty',
-           'ListOfProperty', 'TableFeatures')
+           'ListOfTableId', 'ListOfProperty', 'TableFeatures')
 
 # Enum
 
@@ -509,6 +509,25 @@ class InstructionsProperty(Property):
         self.update_length()
 
 
+class ListOfTableId(FixedTypeList):
+    """List of Table IDs.
+
+    Represented by instances of UBInt8.
+    """
+
+    def __init__(self, items=None):
+        """Create a ListOfTableId with the optional parameters below.
+
+        Args:
+            items (|UBInt8|): Instance or a list of instances.
+
+        """
+        items = [
+            x if isinstance(x, UBInt8) else UBInt8(x) for x in items or []
+        ]
+        super().__init__(pyof_class=UBInt8, items=items)
+
+
 class NextTablesProperty(Property):
     """Next Tables Property.
 
@@ -517,7 +536,7 @@ class NextTablesProperty(Property):
         OFPTFPT_NEXT_TABLES_MISS
     """
 
-    next_table_ids = ListOfInstruction()
+    next_table_ids = ListOfTableId()
 
     def __init__(self, property_type=TableFeaturePropType.OFPTFPT_NEXT_TABLES,
                  next_table_ids=None):
@@ -526,13 +545,16 @@ class NextTablesProperty(Property):
         Args:
             type(|TableFeaturePropType_v0x04|):
                 Property Type value of this instance.
-            next_table_ids (|ListOfInstruction_v0x04|):
-                List of InstructionGotoTable instances.
+            next_table_ids (|ListOfTableId_v0x04|):
+                List of UBInt8 (Table IDs) instances.
 
         """
         super().__init__(property_type)
-        self.next_table_ids = (ListOfInstruction() if next_table_ids is None
-                               else next_table_ids)
+        self.next_table_ids = (
+            next_table_ids
+            if isinstance(next_table_ids, ListOfTableId)
+            else ListOfTableId(next_table_ids)
+        )
         self.update_length()
 
 
