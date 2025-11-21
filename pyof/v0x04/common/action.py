@@ -112,6 +112,8 @@ class ActionHeader(GenericStruct):
         """Return the action length including the padding (multiple of 8)."""
         if isinstance(value, ActionHeader):
             return value.get_size()
+        if self.__class__ == ActionHeader:
+            return super().get_size()
         if value is None:
             current_size = super().get_size()
             return ceil(current_size / 8) * 8
