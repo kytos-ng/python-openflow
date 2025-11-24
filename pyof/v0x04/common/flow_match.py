@@ -130,6 +130,8 @@ class OxmOfbMatchField(IntEnum):
     OFPXMT_OFB_TUNNEL_ID = 38
     #: IPv6 Extension Header pseudo-field
     OFPXMT_OFB_IPV6_EXTHDR = 39
+    #: PBB UCA header field
+    OFPXMT_OFB_PBB_UCA = 41
 
 
 class MatchType(IntEnum):
