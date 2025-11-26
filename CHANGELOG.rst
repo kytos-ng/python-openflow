@@ -13,6 +13,12 @@ Fixed
 - Fix ``NextTableProperty.next_table_ids`` to correctly export only the Table IDs
 - Fix table features ``Property`` to add padding bytes when size is not multiple of 8
 
+Added
+=====
+
+- Added classes for Table Feature Properties: ``InstructionId``, ``ActionId`` and ``OxmId`` for better handling the
+  packing and unpacking routines
+
 [2025.1.0] - 2025-04-14
 ***********************
 
