@@ -8,22 +8,23 @@ from pyof.foundation.base import GenericMessage, GenericStruct
 from pyof.foundation.basic_types import (
     Char, FixedTypeList, Pad, UBInt8, UBInt16, UBInt32, UBInt64)
 from pyof.foundation.constants import OFP_MAX_TABLE_NAME_LEN
+from pyof.foundation.exceptions import UnpackException
 from pyof.v0x04.asynchronous.flow_removed import FlowRemovedReason
 from pyof.v0x04.asynchronous.packet_in import PacketInReason
 from pyof.v0x04.asynchronous.port_status import PortReason
 # Local source tree imports
-from pyof.v0x04.common.action import (
-    ActionHeader, ControllerMaxLen, ListOfActions)
-from pyof.v0x04.common.flow_instructions import ListOfInstruction
-from pyof.v0x04.common.flow_match import ListOfOxmHeader
+from pyof.v0x04.common.action import ActionHeader, ActionType, ControllerMaxLen
+from pyof.v0x04.common.flow_instructions import InstructionType
+from pyof.v0x04.common.flow_match import OxmClass, OxmTLV
 from pyof.v0x04.common.header import Header
 from pyof.v0x04.controller2switch.table_mod import Table
 
 __all__ = ('ConfigFlag', 'ControllerRole', 'TableFeaturePropType',
            'MultipartType', 'Bucket', 'BucketCounter', 'ListOfBucketCounter',
            'ExperimenterMultipartHeader', 'Property', 'InstructionsProperty',
-           'NextTablesProperty', 'ActionsProperty', 'OxmProperty',
-           'ListOfTableId', 'ListOfProperty', 'TableFeatures')
+           'NextTablesProperty', 'ActionsProperty', 'OxmProperty', 'ActionId',
+           'ListOfActionId', 'InstructionId', 'ListOfInstructionId', 'OxmId',
+           'ListOfOxmId', 'ListOfTableId', 'ListOfProperty', 'TableFeatures')
 
 # Enum
 
@@ -497,6 +498,80 @@ class Property(GenericStruct):
         return packet
 
 
+class InstructionId(GenericStruct):
+    """Generic InstructionId class.
+
+    This class represents a InstructionId that can be used with TableFeatures.
+    While OpenFlow 1.3.2 shares the same ofp_instruction for flow_mod and
+    table_features, we followed same approach as Ryu and OF 1.4: we have
+    separate classes.
+    """
+
+    instruction_type = UBInt16(enum_ref=InstructionType)
+    length = UBInt16()
+    exp_data = FixedTypeList(UBInt8)
+
+    def __init__(self, instruction_type=None, length=None, exp_data=None):
+        """Create a Instruction with the optional parameters below.
+
+        Args:
+            instruction_type(InstructionType): Type of instruction.
+            length (int): Length of the InstructionId, including this header.
+            exp_data (Union[list[UBInt8], int]):
+                Optional experimenter id + data. Can be a list of unsigned 8bit
+                integers or an integer (which will be converted accoding to the
+                length - 4).
+        """
+        super().__init__()
+        self.instruction_type = instruction_type
+        self.length = length or 4
+        if isinstance(exp_data, FixedTypeList):
+            self.exp_data = exp_data
+        elif isinstance(exp_data, int) and length > 4:
+            self.exp_data = FixedTypeList(UBInt8, [
+                UBInt8(b)
+                for b in exp_data.to_bytes(length - 4, 'big', signed=False)
+            ])
+        else:
+            self.exp_data = FixedTypeList(UBInt8)
+
+    def unpack(self, buff, offset=0):
+        """Discard padding bytes using the unpacked length attribute."""
+        begin = offset
+        for name, value in list(self.get_class_attributes())[:-1]:
+            size = self._unpack_attribute(name, value, buff, begin)
+            begin += size
+        self._unpack_attribute('exp_data', type(self).exp_data,
+                               buff[:offset+self.length], begin)
+
+    def get_size(self, value=None):
+        """
+        Return the InstructionId length.
+
+        If the object length is None, returns the minimum size.
+        """
+        if self.length is None:
+            return super().get_size(value)
+
+        return self.length
+
+
+class ListOfInstructionId(FixedTypeList):
+    """List of InstructionIds.
+
+    Represented by instances of InstructionId.
+    """
+
+    def __init__(self, items=None):
+        """Create ListOfInstructionId with the optional parameters below.
+
+        Args:
+            items (~pyof.v0x04.controller2switch.common.InstructionId):
+                Instance or a list of instances.
+        """
+        super().__init__(pyof_class=InstructionId, items=items)
+
+
 class InstructionsProperty(Property):
     """Instructions property.
 
@@ -505,21 +580,21 @@ class InstructionsProperty(Property):
         OFPTFPT_INSTRUCTIONS_MISS
     """
 
-    instruction_ids = ListOfInstruction()
+    instruction_ids = ListOfInstructionId()
 
     def __init__(self, property_type=TableFeaturePropType.OFPTFPT_INSTRUCTIONS,
                  instruction_ids=None):
         """Create a InstructionsProperty with the optional parameters below.
 
         Args:
-            type(|TableFeaturePropType_v0x04|):
+            property_type(|TableFeaturePropType_v0x04|):
                 Property Type value of this instance.
-            next_table_ids(|ListOfInstruction_v0x04|):
-                List of InstructionGotoTable instances.
+            instruction_ids(|ListOfInstruction_v0x04|):
+                List of InstructionId instances.
 
         """
         super().__init__(property_type=property_type)
-        self.instruction_ids = instruction_ids if instruction_ids else []
+        self.instruction_ids = instruction_ids or ListOfInstructionId()
         self.update_length()
 
 
@@ -572,6 +647,81 @@ class NextTablesProperty(Property):
         self.update_length()
 
 
+class ActionId(GenericStruct):
+    """Generic ActionId class.
+
+    This class represents an ActionId that can be used with TableFeatures.
+    While OpenFlow 1.3.2 shares the same ofp_action for flow_mod and
+    table_features, we followed same approach as Ryu and OF 1.4: we have
+    separate classes.
+    """
+
+    action_type = UBInt16(enum_ref=ActionType)
+    length = UBInt16()
+    exp_data = FixedTypeList(UBInt8)
+
+    def __init__(self, action_type=None, length=None, exp_data=None):
+        """Create a ActionId with the optional parameters below.
+
+        Args:
+            action_type (~pyof.v0x04.common.action.ActionType):
+                The type of the action (One of OFPAT_*).
+            length (int): Length of the ActionId, including this header.
+            exp_data (Union[list[UBInt8], int]):
+                Optional experimenter id + data. Can be a list of unsigned 8bit
+                integers or an integer (which will be converted accoding to the
+                length).
+        """
+        super().__init__()
+        self.action_type = action_type
+        self.length = length or 4
+        if isinstance(exp_data, FixedTypeList):
+            self.exp_data = exp_data
+        elif isinstance(exp_data, int) and length > 4:
+            self.exp_data = FixedTypeList(UBInt8, [
+                UBInt8(b)
+                for b in exp_data.to_bytes(length - 4, 'big', signed=False)
+            ])
+        else:
+            self.exp_data = FixedTypeList(UBInt8)
+
+    def unpack(self, buff, offset=0):
+        """Discard padding bytes using the unpacked length attribute."""
+        begin = offset
+        for name, value in list(self.get_class_attributes())[:-1]:
+            size = self._unpack_attribute(name, value, buff, begin)
+            begin += size
+        self._unpack_attribute('exp_data', type(self).exp_data,
+                               buff[:offset+self.length], begin)
+
+    def get_size(self, value=None):
+        """
+        Return the ActionId length.
+
+        If the object length is None, returns the minimum size.
+        """
+        if self.length is None:
+            return super().get_size(value)
+
+        return self.length
+
+
+class ListOfActionId(FixedTypeList):
+    """List of ActionIds.
+
+    Represented by instances of ActionId.
+    """
+
+    def __init__(self, items=None):
+        """Create ListOfActionId with the optional parameters below.
+
+        Args:
+            items (:class:`~pyof.v0x04.controller2switch.common.ActionId`):
+                Instance or a list of instances.
+        """
+        super().__init__(pyof_class=ActionId, items=items)
+
+
 class ActionsProperty(Property):
     """Actions Property.
 
@@ -582,7 +732,7 @@ class ActionsProperty(Property):
         OFPTFPT_APPLY_ACTIONS_MISS
     """
 
-    action_ids = ListOfActions()
+    action_ids = ListOfActionId()
 
     def __init__(self,
                  property_type=TableFeaturePropType.OFPTFPT_WRITE_ACTIONS,
@@ -597,8 +747,78 @@ class ActionsProperty(Property):
 
         """
         super().__init__(property_type)
-        self.action_ids = action_ids if action_ids else ListOfActions()
+        self.action_ids = action_ids or ListOfActionId()
         self.update_length()
+
+
+class OxmId(OxmTLV):
+    """Generic OxmId class for Oxm Property table features.
+
+    This class represents an OxmId that can be used with TableFeatures.
+    OpenFlow spec only specify that elements are 32-bit OXM headers or 64-bit
+    OXM headers for experimenter OXM fields. Since no oxm_value is expected
+    for non-experimenter OXM fields, we implemented this wrapper around OxmTLV
+    to avoid unpacking more than bytes than necessary.
+    """
+
+    def __init__(self, *args, oxm_length=None, **kwargs):
+        """Create a OXM TLV with fixed length for non-experimenter OxmIds."""
+        super().__init__(*args, **kwargs)
+        self.oxm_length = oxm_length
+
+    def _update_length(self):
+        """OxmId for table feature properties are fixed on 32 or 64bits."""
+        if self.oxm_length:
+            return
+        super()._update_length()
+
+    def unpack(self, buff, offset=0):
+        """Unpack the buffer into a OxmId. Different from OxmTLV we dont create
+        actual Match fields with their attributes (just field, mask and value).
+
+        Args:
+            buff (bytes): The binary data to be unpacked.
+            offset (int): If we need to shift the beginning of the data.
+
+        """
+        # oxm (32 bit) == class (16) | field (7) | hasmask (1) | length (8)
+        # in case of experimenter OXMs, another 32 bit value
+        # (experimenter id) follows.
+        self.oxm_class = UBInt16(enum_ref=OxmClass)
+        self.oxm_class.unpack(buff, offset)
+        self.oxm_field_and_mask = UBInt8()
+        self.oxm_field_and_mask.unpack(buff, offset+2)
+        self.oxm_length = UBInt8()
+        self.oxm_length.unpack(buff, offset+3)
+
+        # Recover field from field_and_hasmask.
+        try:
+            self.oxm_field = self._unpack_oxm_field()
+        except ValueError as exception:
+            raise UnpackException(exception)
+
+        # The last bit of field_and_mask is oxm_hasmask
+        self.oxm_hasmask = (self.oxm_field_and_mask & 1) == 1  # as boolean
+
+        # Unpack the remaining 32bit in case of experimenter id
+        if self.oxm_class == OxmClass.OFPXMC_EXPERIMENTER:
+            self.oxm_value = buff[offset+4:offset+8]
+
+
+class ListOfOxmId(FixedTypeList):
+    """List of OxmIds.
+
+    Represented by instances of OxmId.
+    """
+
+    def __init__(self, items=None):
+        """Create ListOfOxmId with the optional parameters below.
+
+        Args:
+            items (:class:`~pyof.v0x04.controller2switch.common.OxmId`):
+                Instance or a list of instances.
+        """
+        super().__init__(pyof_class=OxmId, items=items)
 
 
 class OxmProperty(Property):
@@ -613,7 +833,7 @@ class OxmProperty(Property):
         OFPTFPT_APPLY_SETFIELD_MISS
     """
 
-    oxm_ids = ListOfOxmHeader()
+    oxm_ids = ListOfOxmId()
 
     def __init__(self, property_type=TableFeaturePropType.OFPTFPT_MATCH,
                  oxm_ids=None):
@@ -622,12 +842,12 @@ class OxmProperty(Property):
         Args:
             type(|TableFeaturePropType_v0x04|):
                 Property Type value of this instance.
-            oxm_ids(|ListOfOxmHeader_v0x04|):
-                List of OxmHeader instances.
+            oxm_ids(|ListOfOxmId|):
+                List of OxmId instances.
 
         """
         super().__init__(property_type)
-        self.oxm_ids = ListOfOxmHeader() if oxm_ids is None else oxm_ids
+        self.oxm_ids = ListOfOxmId() if oxm_ids is None else oxm_ids
         self.update_length()
 
 
