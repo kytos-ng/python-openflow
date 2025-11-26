@@ -1,29 +1,20 @@
 """TableFeatures message tests."""
 
-from pyof.v0x04.common.action import ActionExperimenter, ActionHeader, ActionType
-from pyof.v0x04.common.flow_instructions import Instruction, InstructionType
-from pyof.v0x04.common.flow_match import OxmOfbMatchField, OxmTLV
+from pyof.v0x04.common.action import ActionType
+from pyof.v0x04.common.flow_instructions import InstructionType
+from pyof.v0x04.common.flow_match import OxmOfbMatchField
 from pyof.v0x04.controller2switch.common import (
+    ActionId,
     ActionsProperty,
+    InstructionId,
     InstructionsProperty,
     NextTablesProperty,
+    OxmId,
     OxmProperty,
     TableFeaturePropType,
     TableFeatures,
 )
-from tests.unit.test_struct import StructTest as PyofStructTest
-
-
-# TODO: remove this wrapper class once we fix issue #108
-class StructTest(PyofStructTest):
-    """Wrapper class to temporary skip unpack tests."""
-
-    def test_raw_dump_file(self):
-        """Overwrite test_raw_dump_file to skip unpack test."""
-        file_bytes = self.get_raw_dump().read()
-        pyof_obj = self.get_raw_object()
-        self._test_pack(pyof_obj, file_bytes)
-        # self._test_unpack(pyof_obj, file_bytes)
+from tests.unit.test_struct import StructTest
 
 
 class TestTableFeatures(StructTest):
@@ -53,7 +44,7 @@ class TestTableFeatures(StructTest):
         ]
         inst_ids = []
         for inst in insts:
-            inst_ids.append(Instruction(instruction_type=inst))
+            inst_ids.append(InstructionId(instruction_type=inst))
         inst_prop_types = [
             TableFeaturePropType.OFPTFPT_INSTRUCTIONS,
             TableFeaturePropType.OFPTFPT_INSTRUCTIONS_MISS,
@@ -103,8 +94,12 @@ class TestTableFeatures(StructTest):
         ]
         action_ids = []
         for action in actions:
-            action_ids.append(ActionHeader(action_type=action, length=4))
-        action_ids.append(ActionExperimenter(length=8, experimenter=0xFF000002))
+            action_ids.append(ActionId(action_type=action))
+        action_ids.append(
+            ActionId(
+                action_type=ActionType.OFPAT_EXPERIMENTER, length=8, exp_data=0xFF000002
+            )
+        )
         action_prop_types = [
             TableFeaturePropType.OFPTFPT_WRITE_ACTIONS,
             TableFeaturePropType.OFPTFPT_WRITE_ACTIONS_MISS,
@@ -164,7 +159,7 @@ class TestTableFeatures(StructTest):
         oxm_ids = []
         for oxm in oxms:
             s, m = match_fields_size_mask[oxm.value]
-            oxm_ids.append(OxmTLV(oxm_field=oxm, oxm_hasmask=m, oxm_length=s))
+            oxm_ids.append(OxmId(oxm_field=oxm, oxm_hasmask=m, oxm_length=s))
         tb_props.append(
             OxmProperty(
                 property_type=TableFeaturePropType.OFPTFPT_MATCH, oxm_ids=oxm_ids
@@ -173,7 +168,7 @@ class TestTableFeatures(StructTest):
         oxm_ids = []
         for oxm in oxms:
             s, m = match_fields_size_mask[oxm.value]
-            oxm_ids.append(OxmTLV(oxm_field=oxm, oxm_hasmask=False, oxm_length=s))
+            oxm_ids.append(OxmId(oxm_field=oxm, oxm_hasmask=False, oxm_length=s))
         tb_props.append(
             OxmProperty(
                 property_type=TableFeaturePropType.OFPTFPT_WILDCARDS, oxm_ids=oxm_ids
@@ -229,7 +224,7 @@ class TestTableFeatures(StructTest):
         ]
         oxm_ids = []
         for oxm in setfield_oxms:
-            oxm_ids.append(OxmTLV(oxm_field=oxm, oxm_hasmask=False, oxm_length=0))
+            oxm_ids.append(OxmId(oxm_field=oxm, oxm_hasmask=False, oxm_length=0))
         for oxm_prop_type in setfield_oxm_prop_types:
             tb_oxm_ids = oxm_ids
             tb_props.append(
