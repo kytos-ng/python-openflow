@@ -14,6 +14,7 @@ from pyof.v0x04.controller2switch.common import (
 from tests.unit.test_struct import StructTest as PyofStructTest
 
 
+# TODO: remove this wrapper class once we fix issue #108
 class StructTest(PyofStructTest):
     """Wrapper class to temporary skip unpack tests."""
 
