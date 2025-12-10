@@ -397,7 +397,7 @@ class ActionPopMPLS(ActionHeader):
         Args:
             ethertype (int): indicates the Ethertype of the payload.
         """
-        super().__init__(action_type=ActionType.OFPAT_POP_MPLS)
+        super().__init__(action_type=ActionType.OFPAT_POP_MPLS, length=8)
         self.ethertype = ethertype
 
 
