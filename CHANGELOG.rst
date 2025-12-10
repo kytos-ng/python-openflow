@@ -10,6 +10,7 @@ Fixed
 =====
 - Added missing ``ActionPopMPLS.length`` attribute to fix ``PackException`` when packing objects.
 - Correct return value for ``get_size()`` when used with ``ActionHeader`` objects directly (useful for TableFeatures Properties).
+- Fix ``NextTableProperty.next_table_ids`` to correctly export only the Table IDs
 
 [2025.1.0] - 2025-04-14
 ***********************
