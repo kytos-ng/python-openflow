@@ -9,6 +9,7 @@ All notable changes to the `python-openflow` project are documented in this file
 Fixed
 =====
 - Added missing ``ActionPopMPLS.length`` attribute to fix ``PackException`` when packing objects.
+- Correct return value for ``get_size()`` when used with ``ActionHeader`` objects directly (useful for TableFeatures Properties).
 
 [2025.1.0] - 2025-04-14
 ***********************
