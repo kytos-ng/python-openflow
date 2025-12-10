@@ -2,6 +2,7 @@
 
 # System imports
 from enum import IntEnum
+from math import ceil
 
 from pyof.foundation.base import GenericMessage, GenericStruct
 from pyof.foundation.basic_types import (
@@ -454,7 +455,8 @@ class Property(GenericStruct):
 
         """
         self.update_length()
-        return super().pack(value)
+        packet = super().pack(value)
+        return self._complete_last_byte(packet)
 
     def unpack(self, buff=None, offset=0):
         """Unpack *buff* into this object.
@@ -480,7 +482,19 @@ class Property(GenericStruct):
 
     def update_length(self):
         """Update the length of current instance."""
-        self.length = self.get_size()
+        self.length = super().get_size()
+
+    def get_size(self, value=None):
+        """Return the packet length including the padding (multiple of 8)."""
+        current_size = super().get_size()
+        return ceil(current_size / 8) * 8
+
+    def _complete_last_byte(self, packet):
+        """Pad until the packet length is a multiple of 8 (bytes)."""
+        padding_bytes = self.get_size() - len(packet)
+        if padding_bytes > 0:
+            packet += Pad(padding_bytes).pack()
+        return packet
 
 
 class InstructionsProperty(Property):

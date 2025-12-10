@@ -130,6 +130,8 @@ class OxmOfbMatchField(IntEnum):
     OFPXMT_OFB_TUNNEL_ID = 38
     #: IPv6 Extension Header pseudo-field
     OFPXMT_OFB_IPV6_EXTHDR = 39
+    #: PBB UCA header field
+    OFPXMT_OFB_PBB_UCA = 41
 
 
 class MatchType(IntEnum):
@@ -190,8 +192,14 @@ class OxmTLV(GenericStruct):
     oxm_length = UBInt8()
     oxm_value = BinaryData()
 
-    def __init__(self, oxm_class=OxmClass.OFPXMC_OPENFLOW_BASIC,
-                 oxm_field=None, oxm_hasmask=False, oxm_value=None):
+    def __init__(
+        self,
+        oxm_class=OxmClass.OFPXMC_OPENFLOW_BASIC,
+        oxm_field=None,
+        oxm_hasmask=False,
+        oxm_value=None,
+        oxm_length=None,
+    ):
         """Create an OXM TLV struct with the optional parameters below.
 
         Args:
@@ -205,7 +213,7 @@ class OxmTLV(GenericStruct):
         super().__init__()
         self.oxm_class = oxm_class
         self.oxm_field_and_mask = None
-        self.oxm_length = None
+        self.oxm_length = oxm_length
         self.oxm_value = oxm_value
         # Attributes that are not packed
         self.oxm_field = oxm_field
@@ -257,6 +265,8 @@ class OxmTLV(GenericStruct):
         Update the oxm_length field with the packed payload length.
 
         """
+        if self.oxm_length:
+            return
         payload = type(self).oxm_value.pack(self.oxm_value)
         self.oxm_length = len(payload)
 
