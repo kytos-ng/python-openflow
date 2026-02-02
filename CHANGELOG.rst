@@ -6,6 +6,9 @@ All notable changes to the `python-openflow` project are documented in this file
 [UNRELEASED] - Under development
 ********************************
 
+[2025.2.0] - 2026-02-02
+***********************
+
 Fixed
 =====
 - Added missing ``ActionPopMPLS.length`` attribute to fix ``PackException`` when packing objects.
