@@ -160,6 +160,14 @@ class Match(GenericStruct):
                                  enum_ref=FlowWildCards)
         self.wildcards.unpack(buff, offset)
 
+        # Update nw_src and nw_dst netmask from wildcard mask bits
+        src_mask_bits = self.wildcards & FlowWildCards.OFPFW_NW_SRC_MASK
+        src_mask_bits = src_mask_bits >> FlowWildCards.OFPFW_NW_SRC_SHIFT
+        self.nw_src.netmask = self.nw_src.max_prefix - src_mask_bits
+        dst_mask_bits = self.wildcards & FlowWildCards.OFPFW_NW_DST_MASK
+        dst_mask_bits = dst_mask_bits >> FlowWildCards.OFPFW_NW_DST_SHIFT
+        self.nw_dst.netmask = self.nw_dst.max_prefix - dst_mask_bits
+
     def fill_wildcards(self, field=None, value=0):
         """Update wildcards attribute.
 

@@ -1,6 +1,7 @@
 """Basic types used in structures and messages."""
 
 # System imports
+import ipaddress
 import struct
 from copy import deepcopy
 
@@ -297,15 +298,11 @@ class IPAddress(GenericType):
             return value.pack()
 
         if value is None:
-            value = self._value
-
-        if value.find('/') >= 0:
-            value = value.split('/')[0]
+            value = f"{self._value}/{self.netmask}"
 
         try:
-            value = value.split('.')
-            return struct.pack('!4B', *[int(x) for x in value])
-        except struct.error as err:
+            return ipaddress.IPv4Network(value).network_address.packed
+        except (ValueError, ipaddress.AddressValueError) as err:
             msg = "IPAddress error. "
             msg += "Class: {}, struct error: {} ".format(type(value).__name__,
                                                          err)
@@ -322,13 +319,12 @@ class IPAddress(GenericType):
             offset (int): Where to begin unpacking.
 
         Raises:
-            Exception: If there is a struct unpacking error.
+            UnpackException: If there is a struct unpacking error.
 
         """
         try:
-            unpacked_data = struct.unpack('!4B', buff[offset:offset+4])
-            self._value = '.'.join([str(x) for x in unpacked_data])
-        except struct.error as exception:
+            self._value = str(ipaddress.IPv4Address(buff[offset:offset+4]))
+        except ipaddress.AddressValueError as exception:
             raise exceptions.UnpackException('%s; %s: %s' % (exception,
                                                              offset, buff))
 
@@ -369,15 +365,6 @@ class IPv6Address(GenericType):
         else:
             netmask = 128 if netmask is None else netmask
 
-        if address == '::':
-            address = '0:0:0:0:0:0:0:0'
-        elif '::' in address:
-            temp = address.split(':')
-            index = temp.index('')
-            temp = [x for x in temp if x != '']
-            address = temp[:index] + ['0'] * (8 - len(temp)) + temp[index:]
-            address = ':'.join(address)
-
         super().__init__(address)
         self.netmask = int(netmask)
 
@@ -393,22 +380,18 @@ class IPv6Address(GenericType):
             bytes: The binary representation.
 
         Raises:
-            struct.error: If the value does not fit the binary format.
+            PackException: If the value does not fit the binary format.
 
         """
         if isinstance(value, type(self)):
             return value.pack()
 
         if value is None:
-            value = self._value
-
-        if value.find('/') >= 0:
-            value = value.split('/')[0]
+            value = f"{self._value}/{self.netmask}"
 
         try:
-            value = value.split(':')
-            return struct.pack('!8H', *[int(x, 16) for x in value])
-        except struct.error as err:
+            return ipaddress.IPv6Network(value).network_address.packed
+        except (ValueError, ipaddress.AddressValueError) as err:
             msg = "IPv6Address error. "
             msg += "Class: {}, struct error: {} ".format(type(value).__name__,
                                                          err)
@@ -425,20 +408,14 @@ class IPv6Address(GenericType):
             offset (int): Where to begin unpacking.
 
         Raises:
-            Exception: If there is a struct unpacking error.
+            UnpackException: If there is a struct unpacking error.
 
         """
-        def _int2hex(number):
-            return "{0:0{1}x}".format(number, 4)
-
         try:
-            unpacked_data = struct.unpack('!8H', buff[offset:offset+16])
-        except struct.error as exception:
+            self._value = str(ipaddress.IPv6Address(buff[offset:offset+16]))
+        except ipaddress.AddressValueError as exception:
             raise exceptions.UnpackException('%s; %s: %s' % (exception,
                                                              offset, buff))
-
-        transformed_data = ':'.join([_int2hex(x) for x in unpacked_data])
-        self._value = transformed_data
 
     def get_size(self, value=None):
         """Return the IPv6 address size in bytes.

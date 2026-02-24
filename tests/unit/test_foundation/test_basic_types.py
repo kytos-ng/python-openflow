@@ -148,7 +148,7 @@ class TestIPAddress:
 
     def test_unpack_packed_with_netmask(self):
         """Testing unpack of packed IPAddress with netmask."""
-        ip_addr = basic_types.IPAddress('192.168.0.1/16')
+        ip_addr = basic_types.IPAddress('192.168.0.0/16')
         packed = ip_addr.pack()
         unpacked = basic_types.IPAddress()
         unpacked.unpack(packed)
@@ -156,9 +156,9 @@ class TestIPAddress:
 
     def test_netmask(self):
         """Testing get netmask from IPAddress."""
-        ip_addr = basic_types.IPAddress('192.168.0.1/24')
+        ip_addr = basic_types.IPAddress('192.168.0.0/24')
         assert ip_addr.netmask == 24
-        ip_addr = basic_types.IPAddress('192.168.0.1/16')
+        ip_addr = basic_types.IPAddress('192.168.0.0/16')
         assert ip_addr.netmask == 16
         ip_addr = basic_types.IPAddress('192.168.0.1')
         assert ip_addr.netmask == 32
@@ -167,13 +167,75 @@ class TestIPAddress:
         """Testing get max_prefix from IPAddress."""
         ip_addr = basic_types.IPAddress()
         assert ip_addr.max_prefix == 32
-        ip_addr = basic_types.IPAddress('192.168.0.35/16')
+        ip_addr = basic_types.IPAddress('192.168.0.0/16')
         assert ip_addr.max_prefix == 32
 
     def test_get_size(self):
         """Testing get_size from IPAddress."""
-        ip_addr = basic_types.IPAddress('192.168.0.1/24')
+        ip_addr = basic_types.IPAddress('192.168.0.0/24')
         assert ip_addr.get_size() == 4
+
+    def test_unexpected_value_invalid_ip(self):
+        """Should raise PackException with invalid IPv4."""
+        ip_addr = basic_types.IPAddress('192.168.260.1')
+        pytest.raises(PackException, ip_addr.pack)
+
+    def test_unexpected_value_invalid_netmask(self):
+        """Should raise PackException with invalid netmask (host bits set)."""
+        ip_addr = basic_types.IPAddress('192.168.0.1/24')
+        pytest.raises(PackException, ip_addr.pack)
+
+
+class TestIPv6Address:
+    """Test of IPv6Address BasicType."""
+
+    def test_unpack_packed(self):
+        """Test unpacking of packed IPv6Address."""
+        ip_addr = basic_types.IPv6Address('2001:db8:a:b:4:3:2:1')
+        packed = ip_addr.pack()
+        unpacked = basic_types.IPv6Address()
+        unpacked.unpack(packed)
+        assert ip_addr.value == unpacked.value
+
+    def test_unpack_packed_compressed(self):
+        """Test unpacking of packed IPv6Address."""
+        ip_addr = basic_types.IPv6Address('2001:db8::1')
+        packed = ip_addr.pack()
+        unpacked = basic_types.IPv6Address()
+        unpacked.unpack(packed)
+        assert ip_addr.value == unpacked.value
+
+    def test_unpack_packed_with_netmask(self):
+        """Testing unpack of packed IPv6Address with netmask."""
+        ip_addr = basic_types.IPv6Address('2001:db8:0:100::/64')
+        packed = ip_addr.pack()
+        unpacked = basic_types.IPv6Address()
+        unpacked.unpack(packed)
+        assert ip_addr.value == unpacked.value
+
+    def test_netmask(self):
+        """Testing get netmask from IPv6Address."""
+        ip_addr = basic_types.IPv6Address('2001:db8:a:b::/64')
+        assert ip_addr.netmask == 64
+        ip_addr = basic_types.IPv6Address('2001:db8::/32')
+        assert ip_addr.netmask == 32
+        ip_addr = basic_types.IPv6Address('2001:db8::1')
+        assert ip_addr.netmask == 128
+
+    def test_get_size(self):
+        """Testing get_size from IPv6Address."""
+        ip_addr = basic_types.IPv6Address('2001:db8:100:ffff::/64')
+        assert ip_addr.get_size() == 16
+
+    def test_unexpected_value_invalid_ip(self):
+        """Should raise PackException with invalid IPv6."""
+        ip_addr = basic_types.IPv6Address('2001:db8:ggg:1::2')
+        pytest.raises(PackException, ip_addr.pack)
+
+    def test_unexpected_value_invalid_netmask(self):
+        """Should raise PackException with invalid netmask (host bits set)."""
+        ip_addr = basic_types.IPv6Address('2001:db8:0:1::2/64')
+        pytest.raises(PackException, ip_addr.pack)
 
 
 class TestBinaryData:
