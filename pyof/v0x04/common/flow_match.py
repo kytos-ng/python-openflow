@@ -165,6 +165,8 @@ class OxmClass(IntEnum):
     OFPXMC_NXM_1 = 0x0001
     #: Basic class for OpenFlow
     OFPXMC_OPENFLOW_BASIC = 0x8000
+    #: Packet registers (pipeline fields)
+    OFPXMC_PACKET_REGS = 0x8001
     #: Experimenter class
     OFPXMC_EXPERIMENTER = 0xFFFF
 
