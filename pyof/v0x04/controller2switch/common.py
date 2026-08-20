@@ -89,6 +89,18 @@ class TableFeaturePropType(IntEnum):
     OFPTFPT_APPLY_SETFIELD = 14
     # Apply Set-Field for table-miss.
     OFPTFPT_APPLY_SETFIELD_MISS = 15
+    # Table synchronisation property.
+    OFPTFPT_TABLE_SYNC_FROM = 16
+    # Write Copy-Field property.
+    OFPTFPT_WRITE_COPYFIELD = 18
+    # Write Copy-Field for table-miss.
+    OFPTFPT_WRITE_COPYFIELD_MISS = 19
+    # Apply Copy-Field property.
+    OFPTFPT_APPLY_COPYFIELD = 20
+    # Apply Copy-Field for table-miss.
+    OFPTFPT_APPLY_COPYFIELD_MISS = 21
+    # Packet types property.
+    OFPTFPT_PACKET_TYPES = 22
     # Experimenter property.
     OFPTFPT_EXPERIMENTER = 0xFFFE
     # Experimenter for table-miss.
@@ -103,8 +115,15 @@ class TableFeaturePropType(IntEnum):
             return NextTablesProperty
         if self.value <= 7:
             return ActionsProperty
-
-        return OxmProperty
+        if self.value <= 15:
+            return OxmProperty
+        if self.value == 16:
+            return NextTablesProperty
+        if self.value <= 21:
+            return OxmProperty
+        if self.value == 22:
+            return PacketTypeProperty
+        return Property
 
 
 class MultipartType(IntEnum):
@@ -623,6 +642,7 @@ class NextTablesProperty(Property):
     This class represents Property with the following types:
         OFPTFPT_NEXT_TABLES
         OFPTFPT_NEXT_TABLES_MISS
+        OFPTFPT_TABLE_SYNC_FROM
     """
 
     next_table_ids = ListOfTableId()
@@ -831,6 +851,10 @@ class OxmProperty(Property):
         OFPTFPT_WRITE_SETFIELD_MISS
         OFPTFPT_APPLY_SETFIELD
         OFPTFPT_APPLY_SETFIELD_MISS
+        OFPTFPT_WRITE_COPYFIELD,
+        OFPTFPT_WRITE_COPYFIELD_MISS,
+        OFPTFPT_APPLY_COPYFIELD,
+        OFPTFPT_APPLY_COPYFIELD_MISS.
     """
 
     oxm_ids = ListOfOxmId()
@@ -849,6 +873,10 @@ class OxmProperty(Property):
         super().__init__(property_type)
         self.oxm_ids = ListOfOxmId() if oxm_ids is None else oxm_ids
         self.update_length()
+
+
+class PacketTypeProperty(Property):
+    pass
 
 
 class ListOfProperty(FixedTypeList):

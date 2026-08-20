@@ -132,6 +132,12 @@ class OxmOfbMatchField(IntEnum):
     OFPXMT_OFB_IPV6_EXTHDR = 39
     #: PBB UCA header field
     OFPXMT_OFB_PBB_UCA = 41
+    #: TCP flags.
+    OFPXMT_OFB_TCP_FLAGS = 42
+    #: Output port from action set metadata.
+    OFPXMT_OFB_ACTSET_OUTPUT = 43
+    #: Packet type value.
+    OFPXMT_OFB_PACKET_TYPE = 44
 
 
 class MatchType(IntEnum):
@@ -169,6 +175,9 @@ class OxmClass(IntEnum):
     OFPXMC_PACKET_REGS = 0x8001
     #: Experimenter class
     OFPXMC_EXPERIMENTER = 0xFFFF
+    # TODO: Figure out what this OXM class is actually for
+    #: Something to do with IPV6???
+    OFPXMC_UNKNOWN = 0x1000
 
 
 class VlanId(IntEnum):
